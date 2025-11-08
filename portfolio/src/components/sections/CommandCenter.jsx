@@ -137,7 +137,7 @@ const CommandCenter = ({ mousePosition }) => {
               backgroundClip: 'text',
               lineHeight: '1.2'
             }}>
-              ONOMIJOLAOLUWA
+              OMOMIJOLAOLUWA
               <br />
               <span style={{ 
                 color: '#cbd5e1', 

@@ -47,7 +47,7 @@ const Navigation = () => {
               backgroundClip: 'text'
             }}
           >
-            Onomijolaoluwa
+            Omomijolaoluwa
           </a>
 
           {/* Desktop Navigation */}
