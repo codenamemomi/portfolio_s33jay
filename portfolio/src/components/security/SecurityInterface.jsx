@@ -9,6 +9,7 @@ import MissionFiles from '../sections/MissionFiles'
 import OperationLog from '../sections/OperationLog'
 import Communications from '../sections/Communications'
 import InteractiveEarth from '../effects/InteractiveEarth'
+import IntroductionOverlay from './IntroductionOverlay'
 import InteractiveTerminal from '../security/Terminal'
 
 const SecurityInterface = () => {
@@ -16,6 +17,8 @@ const SecurityInterface = () => {
   const [isDecrypting, setIsDecrypting] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const interfaceRef = useRef(null)
+  const [showIntro, setShowIntro] = useState(true)
+  const [hasVisited, setHasVisited] = useState(false)
 
   // Sections with positions and security clearance
     const sections = [
@@ -68,6 +71,20 @@ const SecurityInterface = () => {
         color: '#06b6d4'
     }
     ]
+
+  useEffect(() => {
+    const visited = localStorage.getItem('portfolio_visited')
+    if (visited) {
+      setShowIntro(false)
+      setHasVisited(true)
+    }
+  }, [])
+
+  const handleIntroComplete = () => {
+    setShowIntro(false)
+    setHasVisited(true)
+    localStorage.setItem('portfolio_visited', 'true')
+  }
   // Mouse tracking for parallax
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -156,7 +173,7 @@ const SecurityInterface = () => {
         }} />
 
         {/* Radar Sweep */}
-        <div style={{
+        {/* <div style={{
         position: 'absolute',
         top: '50%',
         left: '50%',
@@ -182,7 +199,7 @@ const SecurityInterface = () => {
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
         />
-        </div>
+        </div> */}
 
         {/* Section Targets */}
         {sections.map((section) => (
@@ -194,6 +211,29 @@ const SecurityInterface = () => {
             mousePosition={mousePosition}
         />
         ))}
+      {!showIntro && !activeSection && (
+        <motion.button
+          onClick={() => setShowIntro(true)}
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            padding: '0.5rem 1rem',
+            background: 'rgba(59, 130, 246, 0.2)',
+            border: '1px solid rgba(59, 130, 246, 0.5)',
+            borderRadius: '0.5rem',
+            color: '#60a5fa',
+            fontFamily: 'Courier New, monospace',
+            fontSize: 'clamp(0.6rem, 2vw, 0.75rem)',
+            cursor: 'pointer',
+            zIndex: 25
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          NEED HELP?
+        </motion.button>
+      )}
 
       {/* Terminal Status Bar */}
         <div style={{
@@ -298,6 +338,12 @@ const SecurityInterface = () => {
             onBack={handleBackToMap}
             mousePosition={mousePosition}
           />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showIntro && (
+          <IntroductionOverlay onComplete={handleIntroComplete} />
         )}
       </AnimatePresence>
     </div>
@@ -441,24 +487,36 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
 
 // Section Content View with Holographic Effect
 const SectionView = ({ section, onBack, mousePosition }) => {
-    const renderSectionContent = () => {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const renderSectionContent = () => {
     switch (section.id) {
-        case 'command':
+      case 'command':
         return <CommandCenter mousePosition={mousePosition} />
-        case 'profile':
+      case 'profile':
         return <AgentProfile />
-        case 'specs':
+      case 'specs':
         return <TechnicalSpecs />
-        case 'missions':
+      case 'missions':
         return <MissionFiles />
-        case 'operations':
+      case 'operations':
         return <OperationLog />
-        case 'comms':
+      case 'comms':
         return <Communications />
-        default:
+      default:
         return <div>SECTION NOT FOUND</div>
     }
-    }
+  }
 
   return (
     <motion.div
@@ -466,14 +524,14 @@ const SectionView = ({ section, onBack, mousePosition }) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       style={{
-        position: 'fixed', // Changed from absolute to fixed
-        top: '5%', // Position from top
-        left: '5%', // Position from left
-        right: '5%', // Position from right  
-        bottom: '5%', // Position from bottom
-        background: 'rgba(15, 23, 42, 0.95)',
+        position: 'fixed',
+        top: isMobile ? '2%' : '5%',
+        left: isMobile ? '2%' : '5%',
+        right: isMobile ? '2%' : '5%',
+        bottom: isMobile ? '2%' : '5%',
+        background: 'rgba(15, 23, 42, 0.98)',
         border: `2px solid ${section.color}80`,
-        borderRadius: '1rem',
+        borderRadius: isMobile ? '0.5rem' : '1rem',
         backdropFilter: 'blur(20px)',
         zIndex: 50,
         overflow: 'hidden',
@@ -515,7 +573,7 @@ const SectionView = ({ section, onBack, mousePosition }) => {
 
       {/* Header with Close Button */}
       <div style={{
-        padding: '1rem 1.5rem',
+        padding: isMobile ? '0.75rem 1rem' : '1rem 1.5rem',
         borderBottom: `1px solid ${section.color}30`,
         background: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
@@ -523,10 +581,10 @@ const SectionView = ({ section, onBack, mousePosition }) => {
         alignItems: 'center',
         flexShrink: 0
       }}>
-        <div>
+        <div style={{ flex: 1 }}>
           <h2 style={{
             color: section.color,
-            fontSize: '1.25rem',
+            fontSize: isMobile ? '1rem' : '1.25rem',
             fontWeight: 'bold',
             margin: 0,
             fontFamily: 'Courier New, monospace'
@@ -535,7 +593,7 @@ const SectionView = ({ section, onBack, mousePosition }) => {
           </h2>
           <div style={{
             color: '#94a3b8',
-            fontSize: '0.75rem',
+            fontSize: isMobile ? '0.65rem' : '0.75rem',
             fontFamily: 'Courier New, monospace'
           }}>
             SECURITY CLEARANCE: {section.clearance} | ACCESS GRANTED
@@ -546,7 +604,7 @@ const SectionView = ({ section, onBack, mousePosition }) => {
         <motion.button
           onClick={onBack}
           style={{
-            padding: '0.5rem 1rem',
+            padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1rem',
             background: 'rgba(239, 68, 68, 0.2)',
             border: '1px solid rgba(239, 68, 68, 0.5)',
             borderRadius: '0.5rem',
@@ -554,7 +612,8 @@ const SectionView = ({ section, onBack, mousePosition }) => {
             fontFamily: 'Courier New, monospace',
             fontWeight: 'bold',
             cursor: 'pointer',
-            fontSize: '0.875rem'
+            fontSize: isMobile ? '0.75rem' : '0.875rem',
+            whiteSpace: 'nowrap'
           }}
           whileHover={{ 
             scale: 1.05,
@@ -571,7 +630,7 @@ const SectionView = ({ section, onBack, mousePosition }) => {
         flex: 1,
         overflowY: 'auto',
         overflowX: 'hidden',
-        padding: '0'
+        padding: isMobile ? '0.5rem' : '0'
       }}>
         {renderSectionContent()}
       </div>
