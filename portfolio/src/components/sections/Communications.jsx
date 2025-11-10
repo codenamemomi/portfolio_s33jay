@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Shield, Satellite } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Shield, Satellite, AlertCircle } from 'lucide-react'
 
 const Communications = () => {
+  const [isMobile, setIsMobile] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,24 +12,35 @@ const Communications = () => {
   })
   const [isEncrypting, setIsEncrypting] = useState(false)
   const [isSent, setIsSent] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const contactMethods = [
     {
-      icon: <Mail style={{ width: '20px', height: '20px' }} />,
+      icon: <Mail style={{ width: 'clamp(18px, 4vw, 20px)', height: 'clamp(18px, 4vw, 20px)' }} />,
       label: 'ENCRYPTED EMAIL',
       value: 'akinrogundecodenamemomi@gmail.com',
       href: 'mailto:akinrogundecodenamemomi@gmail.com',
       color: '#3b82f6'
     },
     {
-      icon: <Phone style={{ width: '20px', height: '20px' }} />,
+      icon: <Phone style={{ width: 'clamp(18px, 4vw, 20px)', height: 'clamp(18px, 4vw, 20px)' }} />,
       label: 'SECURE LINE',
       value: '+2349011123434',
       href: 'tel:+2349011123434',
       color: '#10b981'
     },
     {
-      icon: <MapPin style={{ width: '20px', height: '20px' }} />,
+      icon: <MapPin style={{ width: 'clamp(18px, 4vw, 20px)', height: 'clamp(18px, 4vw, 20px)' }} />,
       label: 'LOCATION',
       value: 'Nigeria',
       href: '#',
@@ -41,32 +53,61 @@ const Communications = () => {
       ...formData,
       [e.target.name]: e.target.value
     })
+    // Clear error when user starts typing
+    if (error) setError('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsEncrypting(true)
+    setError('')
     
-    // Simulate encryption and transmission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    setIsEncrypting(false)
-    setIsSent(true)
-    
-    // Reset form after success
-    setTimeout(() => {
-      setIsSent(false)
-      setFormData({ name: '', email: '', subject: '', message: '' })
-    }, 3000)
+    try {
+      const API_URL = 'http://localhost:8000/api/v1/contact'
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Transmission failed. Please try again.')
+      }
+
+      const result = await response.json()
+      
+      setIsEncrypting(false)
+      setIsSent(true)
+      
+      // Reset form after success
+      setTimeout(() => {
+        setIsSent(false)
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      }, 3000)
+      
+    } catch (err) {
+      setIsEncrypting(false)
+      setError(err.message || 'Transmission failed. Please try again.')
+    }
   }
 
   return (
     <div style={{ 
       height: '100%', 
-      padding: '1rem',
+      padding: isMobile ? '0.75rem' : '1rem',
       display: 'flex',
       flexDirection: 'column',
-      gap: '1rem'
+      gap: isMobile ? '0.75rem' : '1rem',
+      overflow: 'hidden'
     }}>
       {/* Header */}
       <motion.div
@@ -79,13 +120,18 @@ const Communications = () => {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '0.5rem'
+          gap: isMobile ? '0.5rem' : '1rem',
+          marginBottom: isMobile ? '0.25rem' : '0.5rem',
+          flexWrap: 'wrap'
         }}>
-          <Satellite style={{ width: '24px', height: '24px', color: '#06b6d4' }} />
+          <Satellite style={{ 
+            width: isMobile ? '20px' : '24px', 
+            height: isMobile ? '20px' : '24px', 
+            color: '#06b6d4' 
+          }} />
           <h1 style={{
             color: '#06b6d4',
-            fontSize: '1.25rem',
+            fontSize: isMobile ? '1rem' : '1.25rem',
             fontWeight: 'bold',
             fontFamily: 'Courier New, monospace',
             margin: 0
@@ -95,13 +141,14 @@ const Communications = () => {
         </div>
         
         <div style={{
-          padding: '0.75rem',
+          padding: isMobile ? '0.5rem' : '0.75rem',
           background: 'rgba(30, 41, 59, 0.5)',
           border: '1px solid rgba(6, 182, 212, 0.3)',
           borderRadius: '0.5rem',
           fontFamily: 'Courier New, monospace',
-          fontSize: '0.75rem',
-          color: '#22d3ee'
+          fontSize: isMobile ? '0.65rem' : '0.75rem',
+          color: '#22d3ee',
+          wordBreak: 'break-word'
         }}>
           CHANNEL STATUS: SECURE | ENCRYPTION: ENABLED | CLEARANCE: LEVEL 2
         </div>
@@ -111,28 +158,30 @@ const Communications = () => {
       <div style={{
         flex: 1,
         display: 'grid',
-        gridTemplateColumns: '1fr',
-        gap: '1.5rem',
-        overflowY: 'auto'
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '1rem' : '1.5rem',
+        overflowY: 'auto',
+        overflowX: 'hidden'
       }}>
         {/* Contact Methods */}
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: isMobile ? 0 : -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
           style={{
-            padding: '1.5rem',
+            padding: isMobile ? '1rem' : '1.5rem',
             background: 'rgba(15, 23, 42, 0.6)',
             border: '1px solid rgba(6, 182, 212, 0.3)',
             borderRadius: '1rem',
-            backdropFilter: 'blur(10px)'
+            backdropFilter: 'blur(10px)',
+            minHeight: isMobile ? 'auto' : '400px'
           }}
         >
           <h2 style={{
             color: '#06b6d4',
-            fontSize: '1.1rem',
+            fontSize: isMobile ? '1rem' : '1.1rem',
             fontWeight: 'bold',
-            marginBottom: '1.5rem',
+            marginBottom: isMobile ? '1rem' : '1.5rem',
             fontFamily: 'Courier New, monospace'
           }}>
             SECURE CONTACT CHANNELS
@@ -141,7 +190,7 @@ const Communications = () => {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '1rem'
+            gap: isMobile ? '0.75rem' : '1rem'
           }}>
             {contactMethods.map((method, index) => (
               <motion.a
@@ -153,42 +202,46 @@ const Communications = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem',
+                  gap: isMobile ? '0.75rem' : '1rem',
+                  padding: isMobile ? '0.75rem' : '1rem',
                   background: 'rgba(30, 41, 59, 0.5)',
                   border: `1px solid ${method.color}30`,
                   borderRadius: '0.75rem',
                   textDecoration: 'none',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  minHeight: '60px'
                 }}
                 whileHover={{ 
                   borderColor: `${method.color}60`,
                   background: `rgba(${parseInt(method.color.slice(1, 3), 16)}, ${parseInt(method.color.slice(3, 5), 16)}, ${parseInt(method.color.slice(5, 7), 16)}, 0.1)`,
-                  transform: 'translateX(5px)'
+                  transform: isMobile ? 'none' : 'translateX(5px)'
                 }}
               >
                 <div style={{
-                  padding: '0.5rem',
+                  padding: isMobile ? '0.4rem' : '0.5rem',
                   background: `rgba(${parseInt(method.color.slice(1, 3), 16)}, ${parseInt(method.color.slice(3, 5), 16)}, ${parseInt(method.color.slice(5, 7), 16)}, 0.2)`,
                   borderRadius: '0.5rem',
-                  color: method.color
+                  color: method.color,
+                  flexShrink: 0
                 }}>
                   {method.icon}
                 </div>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
                     color: method.color,
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '0.8rem' : '0.9rem',
                     fontWeight: '600',
                     fontFamily: 'Courier New, monospace',
-                    marginBottom: '0.25rem'
+                    marginBottom: '0.25rem',
+                    wordBreak: 'break-word'
                   }}>
                     {method.label}
                   </div>
                   <div style={{
                     color: '#cbd5e1',
-                    fontSize: '0.8rem',
-                    fontFamily: 'Courier New, monospace'
+                    fontSize: isMobile ? '0.7rem' : '0.8rem',
+                    fontFamily: 'Courier New, monospace',
+                    wordBreak: 'break-word'
                   }}>
                     {method.value}
                   </div>
@@ -200,13 +253,14 @@ const Communications = () => {
           {/* Social Links */}
           <div style={{
             display: 'flex',
-            gap: '1rem',
-            marginTop: '1.5rem',
-            justifyContent: 'center'
+            gap: isMobile ? '0.75rem' : '1rem',
+            marginTop: isMobile ? '1rem' : '1.5rem',
+            justifyContent: 'center',
+            flexWrap: 'wrap'
           }}>
             {[
-              { icon: <Github style={{ width: '18px', height: '18px' }} />, href: 'https://github.com/codenamemomi', color: '#8b5cf6' },
-              { icon: <Linkedin style={{ width: '18px', height: '18px' }} />, href: '#', color: '#3b82f6' }
+              { icon: <Github style={{ width: 'clamp(16px, 3vw, 18px)', height: 'clamp(16px, 3vw, 18px)' }} />, href: 'https://github.com/codenamemomi', color: '#8b5cf6' },
+              { icon: <Linkedin style={{ width: 'clamp(16px, 3vw, 18px)', height: 'clamp(16px, 3vw, 18px)' }} />, href: '#', color: '#3b82f6' }
             ].map((social, index) => (
               <motion.a
                 key={index}
@@ -217,14 +271,15 @@ const Communications = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6 + index * 0.1 }}
                 style={{
-                  padding: '0.75rem',
+                  padding: isMobile ? '0.5rem' : '0.75rem',
                   background: `rgba(${parseInt(social.color.slice(1, 3), 16)}, ${parseInt(social.color.slice(3, 5), 16)}, ${parseInt(social.color.slice(5, 7), 16)}, 0.1)`,
                   border: `1px solid ${social.color}30`,
                   borderRadius: '0.75rem',
                   color: social.color,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  flexShrink: 0
                 }}
                 whileHover={{ 
                   scale: 1.1,
@@ -239,43 +294,80 @@ const Communications = () => {
 
         {/* Secure Message Form */}
         <motion.div
-          initial={{ opacity: 0, x: 50 }}
+          initial={{ opacity: 0, x: isMobile ? 0 : 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
           style={{
-            padding: '1.5rem',
+            padding: isMobile ? '1rem' : '1.5rem',
             background: 'rgba(15, 23, 42, 0.6)',
             border: '1px solid rgba(6, 182, 212, 0.3)',
             borderRadius: '1rem',
-            backdropFilter: 'blur(10px)'
+            backdropFilter: 'blur(10px)',
+            minHeight: isMobile ? 'auto' : '400px'
           }}
         >
           <h2 style={{
             color: '#06b6d4',
-            fontSize: '1.1rem',
+            fontSize: isMobile ? '1rem' : '1.1rem',
             fontWeight: 'bold',
-            marginBottom: '1.5rem',
+            marginBottom: isMobile ? '1rem' : '1.5rem',
             fontFamily: 'Courier New, monospace'
           }}>
             ENCRYPTED MESSAGE TRANSMISSION
           </h2>
+
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                padding: '1rem',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '0.5rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              <AlertCircle style={{ width: '16px', height: '16px', color: '#ef4444', flexShrink: 0 }} />
+              <div style={{
+                color: '#fca5a5',
+                fontSize: '0.8rem',
+                fontFamily: 'Courier New, monospace'
+              }}>
+                {error}
+              </div>
+            </motion.div>
+          )}
 
           {isSent ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               style={{
-                padding: '2rem',
+                padding: isMobile ? '1.5rem' : '2rem',
                 textAlign: 'center',
                 background: 'rgba(34, 197, 94, 0.1)',
                 border: '1px solid rgba(34, 197, 94, 0.3)',
-                borderRadius: '1rem'
+                borderRadius: '1rem',
+                minHeight: '200px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
             >
-              <Shield style={{ width: '48px', height: '48px', color: '#22c55e', margin: '0 auto 1rem' }} />
+              <Shield style={{ 
+                width: isMobile ? '36px' : '48px', 
+                height: isMobile ? '36px' : '48px', 
+                color: '#22c55e', 
+                margin: '0 auto 1rem' 
+              }} />
               <div style={{
                 color: '#22c55e',
-                fontSize: '1.1rem',
+                fontSize: isMobile ? '1rem' : '1.1rem',
                 fontWeight: 'bold',
                 fontFamily: 'Courier New, monospace',
                 marginBottom: '0.5rem'
@@ -284,21 +376,30 @@ const Communications = () => {
               </div>
               <div style={{
                 color: '#86efac',
-                fontSize: '0.8rem',
-                fontFamily: 'Courier New, monospace'
+                fontSize: isMobile ? '0.7rem' : '0.8rem',
+                fontFamily: 'Courier New, monospace',
+                lineHeight: '1.4'
               }}>
                 Message encrypted and transmitted securely.<br/>
                 Awaiting response from command...
               </div>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSubmit} style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: isMobile ? '0.75rem' : '1rem' 
+            }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                gap: isMobile ? '0.75rem' : '1rem' 
+              }}>
                 <div>
                   <label style={{
                     display: 'block',
                     color: '#06b6d4',
-                    fontSize: '0.8rem',
+                    fontSize: isMobile ? '0.7rem' : '0.8rem',
                     fontWeight: '600',
                     marginBottom: '0.5rem',
                     fontFamily: 'Courier New, monospace'
@@ -313,13 +414,13 @@ const Communications = () => {
                     required
                     style={{
                       width: '100%',
-                      padding: '0.75rem',
+                      padding: isMobile ? '0.6rem' : '0.75rem',
                       background: 'rgba(30, 41, 59, 0.5)',
                       border: '1px solid rgba(6, 182, 212, 0.3)',
                       borderRadius: '0.5rem',
                       color: '#e2e8f0',
                       fontFamily: 'Courier New, monospace',
-                      fontSize: '0.8rem'
+                      fontSize: isMobile ? '0.75rem' : '0.8rem'
                     }}
                     placeholder="Enter your identity..."
                   />
@@ -328,7 +429,7 @@ const Communications = () => {
                   <label style={{
                     display: 'block',
                     color: '#06b6d4',
-                    fontSize: '0.8rem',
+                    fontSize: isMobile ? '0.7rem' : '0.8rem',
                     fontWeight: '600',
                     marginBottom: '0.5rem',
                     fontFamily: 'Courier New, monospace'
@@ -343,13 +444,13 @@ const Communications = () => {
                     required
                     style={{
                       width: '100%',
-                      padding: '0.75rem',
+                      padding: isMobile ? '0.6rem' : '0.75rem',
                       background: 'rgba(30, 41, 59, 0.5)',
                       border: '1px solid rgba(6, 182, 212, 0.3)',
                       borderRadius: '0.5rem',
                       color: '#e2e8f0',
                       fontFamily: 'Courier New, monospace',
-                      fontSize: '0.8rem'
+                      fontSize: isMobile ? '0.75rem' : '0.8rem'
                     }}
                     placeholder="secure@channel.com"
                   />
@@ -360,7 +461,7 @@ const Communications = () => {
                 <label style={{
                   display: 'block',
                   color: '#06b6d4',
-                  fontSize: '0.8rem',
+                  fontSize: isMobile ? '0.7rem' : '0.8rem',
                   fontWeight: '600',
                   marginBottom: '0.5rem',
                   fontFamily: 'Courier New, monospace'
@@ -375,13 +476,13 @@ const Communications = () => {
                   required
                   style={{
                     width: '100%',
-                    padding: '0.75rem',
+                    padding: isMobile ? '0.6rem' : '0.75rem',
                     background: 'rgba(30, 41, 59, 0.5)',
                     border: '1px solid rgba(6, 182, 212, 0.3)',
                     borderRadius: '0.5rem',
                     color: '#e2e8f0',
                     fontFamily: 'Courier New, monospace',
-                    fontSize: '0.8rem'
+                    fontSize: isMobile ? '0.75rem' : '0.8rem'
                   }}
                   placeholder="Mission objective..."
                 />
@@ -391,7 +492,7 @@ const Communications = () => {
                 <label style={{
                   display: 'block',
                   color: '#06b6d4',
-                  fontSize: '0.8rem',
+                  fontSize: isMobile ? '0.7rem' : '0.8rem',
                   fontWeight: '600',
                   marginBottom: '0.5rem',
                   fontFamily: 'Courier New, monospace'
@@ -403,17 +504,18 @@ const Communications = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  rows={6}
+                  rows={isMobile ? 4 : 6}
                   style={{
                     width: '100%',
-                    padding: '0.75rem',
+                    padding: isMobile ? '0.6rem' : '0.75rem',
                     background: 'rgba(30, 41, 59, 0.5)',
                     border: '1px solid rgba(6, 182, 212, 0.3)',
                     borderRadius: '0.5rem',
                     color: '#e2e8f0',
                     fontFamily: 'Courier New, monospace',
-                    fontSize: '0.8rem',
-                    resize: 'vertical'
+                    fontSize: isMobile ? '0.75rem' : '0.8rem',
+                    resize: 'vertical',
+                    minHeight: isMobile ? '100px' : '120px'
                   }}
                   placeholder="Transmit encrypted message..."
                 />
@@ -423,7 +525,7 @@ const Communications = () => {
                 type="submit"
                 disabled={isEncrypting}
                 style={{
-                  padding: '1rem 2rem',
+                  padding: isMobile ? '0.75rem 1.5rem' : '1rem 2rem',
                   background: isEncrypting 
                     ? 'rgba(245, 158, 11, 0.2)' 
                     : 'linear-gradient(135deg, #06b6d4, #3b82f6)',
@@ -433,11 +535,12 @@ const Communications = () => {
                   fontWeight: '600',
                   cursor: isEncrypting ? 'not-allowed' : 'pointer',
                   fontFamily: 'Courier New, monospace',
-                  fontSize: '0.9rem',
+                  fontSize: isMobile ? '0.8rem' : '0.9rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.5rem'
+                  gap: '0.5rem',
+                  minHeight: '50px'
                 }}
                 whileHover={isEncrypting ? {} : { scale: 1.05 }}
                 whileTap={isEncrypting ? {} : { scale: 0.95 }}
