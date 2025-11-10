@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSpring, animated } from 'react-spring'
 import { Lock, Unlock, Satellite, Radar, Cpu, User, Briefcase, Mail, Code2, Database } from 'lucide-react'
@@ -19,58 +19,59 @@ const SecurityInterface = () => {
   const interfaceRef = useRef(null)
   const [showIntro, setShowIntro] = useState(true)
   const [hasVisited, setHasVisited] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(false)
 
   // Sections with positions and security clearance
-    const sections = [
+  const sections = [
     {
-        id: 'command',
-        name: 'COMMAND CENTER',
-        icon: <Satellite style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
-        clearance: 'LEVEL 1',
-        position: { x: 20, y: 20 }, // Moved higher for mobile
-        color: '#3b82f6'
+      id: 'command',
+      name: 'COMMAND CENTER',
+      icon: <Satellite style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
+      clearance: 'LEVEL 1',
+      position: { x: 20, y: 20 },
+      color: '#3b82f6'
     },
     {
-        id: 'profile',
-        name: 'AGENT PROFILE',
-        icon: <User style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
-        clearance: 'LEVEL 2',
-        position: { x: 80, y: 25 }, // Moved higher for mobile
-        color: '#10b981'
+      id: 'profile',
+      name: 'AGENT PROFILE',
+      icon: <User style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
+      clearance: 'LEVEL 2',
+      position: { x: 80, y: 25 },
+      color: '#10b981'
     },
     {
-        id: 'specs',
-        name: 'TECHNICAL SPECS',
-        icon: <Cpu style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
-        clearance: 'LEVEL 3',
-        position: { x: 30, y: 60 }, // Adjusted for mobile
-        color: '#f59e0b'
+      id: 'specs',
+      name: 'TECHNICAL SPECS',
+      icon: <Cpu style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
+      clearance: 'LEVEL 3',
+      position: { x: 30, y: 60 },
+      color: '#f59e0b'
     },
     {
-        id: 'missions',
-        name: 'MISSION FILES',
-        icon: <Briefcase style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
-        clearance: 'LEVEL 4',
-        position: { x: 70, y: 65 }, // Adjusted for mobile
-        color: '#8b5cf6'
+      id: 'missions',
+      name: 'MISSION FILES',
+      icon: <Briefcase style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
+      clearance: 'LEVEL 4',
+      position: { x: 70, y: 65 },
+      color: '#8b5cf6'
     },
     {
-        id: 'operations',
-        name: 'OPERATION LOG',
-        icon: <Database style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
-        clearance: 'LEVEL 3',
-        position: { x: 85, y: 50 }, // Adjusted for mobile
-        color: '#ec4899'
+      id: 'operations',
+      name: 'OPERATION LOG',
+      icon: <Database style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
+      clearance: 'LEVEL 3',
+      position: { x: 85, y: 50 },
+      color: '#ec4899'
     },
     {
-        id: 'comms',
-        name: 'COMMUNICATIONS',
-        icon: <Mail style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
-        clearance: 'LEVEL 2',
-        position: { x: 15, y: 80 }, // Adjusted for mobile
-        color: '#06b6d4'
+      id: 'comms',
+      name: 'COMMUNICATIONS',
+      icon: <Mail style={{ width: 'clamp(16px, 4vw, 24px)', height: 'clamp(16px, 4vw, 24px)' }} />,
+      clearance: 'LEVEL 2',
+      position: { x: 15, y: 80 },
+      color: '#06b6d4'
     }
-    ]
+  ]
 
   useEffect(() => {
     const visited = localStorage.getItem('portfolio_visited')
@@ -85,6 +86,7 @@ const SecurityInterface = () => {
     setHasVisited(true)
     localStorage.setItem('portfolio_visited', 'true')
   }
+
   // Mouse tracking for parallax
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -123,22 +125,22 @@ const SecurityInterface = () => {
     setActiveSection(null)
   }
 
-    return (
+  return (
     <div 
-        ref={interfaceRef}
-        style={{
+      ref={interfaceRef}
+      style={{
         width: '100vw',
         height: '100vh',
         position: 'relative',
         overflow: 'hidden',
         fontFamily: 'Courier New, monospace'
-        }}
+      }}
     >
-        {/* 3D Earth Background */}
-        <InteractiveEarth />
+      {/* 3D Earth Background */}
+      <InteractiveEarth />
 
-        {/* Parallax Background Layers */}
-        <animated.div style={{
+      {/* Parallax Background Layers */}
+      <animated.div style={{
         ...parallaxBg1,
         position: 'absolute',
         top: 0,
@@ -146,16 +148,16 @@ const SecurityInterface = () => {
         width: '100%',
         height: '100%',
         backgroundImage: `
-            radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(239, 68, 68, 0.1) 0%, transparent 50%)
+          radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, rgba(239, 68, 68, 0.1) 0%, transparent 50%)
         `,
         pointerEvents: 'none',
         zIndex: 1
-        }} />
+      }} />
 
-        {/* Grid Pattern */}
-        <animated.div style={{
+      {/* Grid Pattern */}
+      <animated.div style={{
         ...parallaxBg2,
         position: 'absolute',
         top: 0,
@@ -163,54 +165,65 @@ const SecurityInterface = () => {
         width: '200%',
         height: '200%',
         backgroundImage: `
-            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+          linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
         `,
         backgroundSize: '50px 50px',
         pointerEvents: 'none',
         zIndex: 1,
         opacity: 0.1
-        }} />
+      }} />
 
-        {/* Radar Sweep */}
-        {/* <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 'clamp(200px, 70vmin, 600px)', // Responsive based on viewport
-        height: 'clamp(200px, 70vmin, 600px)', // Responsive based on viewport
-        border: '2px solid rgba(59, 130, 246, 0.3)',
-        borderRadius: '50%',
-        pointerEvents: 'none',
-        zIndex: 2,
-        background: 'transparent'
-        }}>
-        <motion.div
-            style={{
-            position: 'absolute',
-            top: 0,
-            left: '50%',
-            width: '2px',
-            height: '50%',
-            background: 'linear-gradient(to bottom, transparent, #3b82f6, transparent)',
-            transformOrigin: 'bottom center'
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-        />
-        </div> */}
+      {/* Enhanced Radar Sweep */}
 
-        {/* Section Targets */}
-        {sections.map((section) => (
+      {/* Connection Lines between Sections */}
+      <ConnectionLines sections={sections} mousePosition={mousePosition} />
+
+      {/* Floating Data Streams */}
+      <DataStreams />
+
+      {/* Satellite Tracking Dots */}
+      <SatelliteTrackers mousePosition={mousePosition} />
+
+      {/* Section Targets */}
+      {sections.map((section) => (
         <SectionTarget
-            key={section.id}
-            section={section}
-            isActive={activeSection?.id === section.id}
-            onClick={() => handleSectionClick(section)}
-            mousePosition={mousePosition}
+          key={section.id}
+          section={section}
+          isActive={activeSection?.id === section.id}
+          onClick={() => handleSectionClick(section)}
+          mousePosition={mousePosition}
         />
-        ))}
+      ))}
+
+      {/* Ambient Sound Toggle */}
+      <motion.button
+        onClick={() => setSoundEnabled(!soundEnabled)}
+        style={{
+          position: 'absolute',
+          top: '1rem',
+          left: '1rem',
+          padding: '0.5rem 1rem',
+          background: soundEnabled 
+            ? 'rgba(34, 197, 94, 0.2)' 
+            : 'rgba(100, 116, 139, 0.2)',
+          border: soundEnabled 
+            ? '1px solid rgba(34, 197, 94, 0.5)' 
+            : '1px solid rgba(100, 116, 139, 0.5)',
+          borderRadius: '0.5rem',
+          color: soundEnabled ? '#86efac' : '#cbd5e1',
+          fontFamily: 'Courier New, monospace',
+          fontSize: 'clamp(0.6rem, 2vw, 0.75rem)',
+          cursor: 'pointer',
+          zIndex: 25
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        {soundEnabled ? '🔊 AMBIENT ON' : '🔇 AMBIENT OFF'}
+      </motion.button>
+
+      {/* Help Button */}
       {!showIntro && !activeSection && (
         <motion.button
           onClick={() => setShowIntro(true)}
@@ -235,33 +248,61 @@ const SecurityInterface = () => {
         </motion.button>
       )}
 
-      {/* Terminal Status Bar */}
-        <div style={{
+      {/* Enhanced Terminal Status Bar */}
+      <div style={{
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        background: 'rgba(0, 0, 0, 0.8)',
-        borderTop: '1px solid rgba(59, 130, 246, 0.3)',
-        padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2vw, 1.5rem)',
+        background: 'linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent)',
+        borderTop: '1px solid rgba(59, 130, 246, 0.4)',
+        padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 2rem)',
         fontFamily: 'Courier New, monospace',
-        fontSize: 'clamp(0.6rem, 2vw, 0.875rem)',
+        fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
         color: '#60a5fa',
         display: 'flex',
-        flexDirection: window.innerWidth < 768 ? 'column' : 'row', // Stack on mobile
+        flexDirection: window.innerWidth < 768 ? 'column' : 'row',
         justifyContent: 'space-between',
         alignItems: window.innerWidth < 768 ? 'flex-start' : 'center',
-        gap: window.innerWidth < 768 ? '0.25rem' : '0',
-        zIndex: 10
-        }}>
-        <div>
-            SYSTEM STATUS: <span style={{ color: '#10b981' }}>ONLINE</span> | 
-            SATELLITE LINK: <span style={{ color: '#10b981' }}>ACTIVE</span>
+        gap: window.innerWidth < 768 ? '0.5rem' : '2rem',
+        zIndex: 10,
+        backdropFilter: 'blur(10px)'
+      }}>
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <div>
+            <span style={{ color: '#94a3b8' }}>STATUS:</span> 
+            <motion.span
+              style={{ color: '#10b981', marginLeft: '0.5rem' }}
+              animate={{ opacity: [1, 0.7, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              ONLINE
+            </motion.span>
+          </div>
+          <div>
+            <span style={{ color: '#94a3b8' }}>SATELLITES:</span> 
+            <span style={{ color: '#22d3ee', marginLeft: '0.5rem' }}>12 ACTIVE</span>
+          </div>
+          <div>
+            <span style={{ color: '#94a3b8' }}>THREAT LEVEL:</span> 
+            <span style={{ color: '#f59e0b', marginLeft: '0.5rem' }}>NOMINAL</span>
+          </div>
         </div>
-        <div>
-            MOUSE TRACKING: {Math.round(mousePosition.x)}%, {Math.round(mousePosition.y)}%
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <div>
+            <span style={{ color: '#94a3b8' }}>TRACKING:</span> 
+            <span style={{ color: '#e879f9', marginLeft: '0.5rem' }}>
+              {Math.round(mousePosition.x)}%, {Math.round(mousePosition.y)}%
+            </span>
+          </div>
+          <div>
+            <span style={{ color: '#94a3b8' }}>TIME:</span> 
+            <span style={{ color: '#86efac', marginLeft: '0.5rem' }}>
+              {new Date().toLocaleTimeString()}
+            </span>
+          </div>
         </div>
-        </div>
+      </div>
 
       {/* Decryption Overlay */}
       <AnimatePresence>
@@ -341,12 +382,144 @@ const SecurityInterface = () => {
         )}
       </AnimatePresence>
 
+      {/* Introduction Overlay */}
       <AnimatePresence>
         {showIntro && (
           <IntroductionOverlay onComplete={handleIntroComplete} />
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+// Connection Lines Component
+const ConnectionLines = ({ sections, mousePosition }) => {
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 1
+      }}
+    >
+      {sections.map((section, index) => {
+        const nextSection = sections[(index + 1) % sections.length]
+        return (
+          <motion.line
+            key={`line-${index}`}
+            x1={`${section.position.x}%`}
+            y1={`${section.position.y}%`}
+            x2={`${nextSection.position.x}%`}
+            y2={`${nextSection.position.y}%`}
+            stroke={section.color}
+            strokeWidth="1"
+            strokeOpacity={0.2}
+            strokeDasharray="5,5"
+            animate={{
+              strokeDashoffset: [0, -10]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'linear'
+            }}
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
+// Data Streams Component
+const DataStreams = () => {
+  const streams = useMemo(() => {
+    return Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      position: {
+        x: Math.random() * 100,
+        y: Math.random() * 100
+      },
+      speed: Math.random() * 2 + 1,
+      size: Math.random() * 3 + 1,
+      color: `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, 0.6)`
+    }))
+  }, [])
+
+  return (
+    <>
+      {streams.map((stream) => (
+        <motion.div
+          key={stream.id}
+          style={{
+            position: 'absolute',
+            left: `${stream.position.x}%`,
+            top: `${stream.position.y}%`,
+            width: `${stream.size}px`,
+            height: `${stream.size}px`,
+            background: stream.color,
+            borderRadius: '50%',
+            filter: 'blur(1px)',
+            pointerEvents: 'none'
+          }}
+          animate={{
+            y: [0, -100, 0],
+            opacity: [0, 1, 0],
+            scale: [0.5, 1.2, 0.5]
+          }}
+          transition={{
+            duration: stream.speed * 3,
+            repeat: Infinity,
+            delay: stream.id * 0.5
+          }}
+        />
+      ))}
+    </>
+  )
+}
+
+// Satellite Trackers Component
+const SatelliteTrackers = ({ mousePosition }) => {
+  const trackers = useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      angle: (i / 12) * Math.PI * 2,
+      radius: 30 + Math.random() * 20,
+      speed: 0.1 + Math.random() * 0.2,
+      size: 2 + Math.random() * 2
+    }))
+  }, [])
+
+  return (
+    <>
+      {trackers.map((tracker) => (
+        <motion.div
+          key={tracker.id}
+          style={{
+            position: 'absolute',
+            left: `calc(50% + ${Math.cos(tracker.angle + mousePosition.x * 0.01) * tracker.radius}%)`,
+            top: `calc(50% + ${Math.sin(tracker.angle + mousePosition.y * 0.01) * tracker.radius}%)`,
+            width: `${tracker.size}px`,
+            height: `${tracker.size}px`,
+            background: 'rgba(59, 130, 246, 0.8)',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            filter: 'blur(0.5px)'
+          }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.3, 0.8, 0.3]
+          }}
+          transition={{
+            duration: tracker.speed * 4,
+            repeat: Infinity
+          }}
+        />
+      ))}
+    </>
   )
 }
 
@@ -381,6 +554,30 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
       onHoverEnd={() => setIsHovered(false)}
       onClick={onClick}
     >
+      {/* Pulse Effect */}
+      <motion.div
+        animate={{ 
+          scale: [1, 1.3, 1],
+          opacity: [0, 0.5, 0]
+        }}
+        transition={{ 
+          duration: 3, 
+          repeat: Infinity,
+          delay: Math.random() * 2
+        }}
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 'clamp(50px, 12vw, 90px)',
+          height: 'clamp(50px, 12vw, 90px)',
+          background: `radial-gradient(circle, ${section.color}30 0%, transparent 70%)`,
+          borderRadius: '50%',
+          pointerEvents: 'none'
+        }}
+      />
+
       {/* Target Ring - Responsive size */}
       <motion.div
         animate={{ 
@@ -396,8 +593,8 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'clamp(40px, 10vw, 80px)', // Responsive width
-          height: 'clamp(40px, 10vw, 80px)', // Responsive height
+          width: 'clamp(40px, 10vw, 80px)',
+          height: 'clamp(40px, 10vw, 80px)',
           border: `2px solid ${section.color}`,
           borderRadius: '50%',
           opacity: isHovered ? 0.8 : 0.4
@@ -415,8 +612,8 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'clamp(30px, 8vw, 60px)', // Responsive
-          height: 'clamp(30px, 8vw, 60px)', // Responsive
+          width: 'clamp(30px, 8vw, 60px)',
+          height: 'clamp(30px, 8vw, 60px)',
           background: `radial-gradient(circle, ${section.color}40 0%, transparent 70%)`,
           borderRadius: '50%',
           filter: 'blur(8px)'
@@ -426,8 +623,8 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
       {/* Main Icon - Responsive */}
       <motion.div
         style={{
-          width: 'clamp(30px, 8vw, 50px)', // Responsive
-          height: 'clamp(30px, 8vw, 50px)', // Responsive
+          width: 'clamp(30px, 8vw, 50px)',
+          height: 'clamp(30px, 8vw, 50px)',
           background: `linear-gradient(135deg, ${section.color}20, ${section.color}40)`,
           border: `2px solid ${section.color}`,
           borderRadius: '50%',
@@ -437,7 +634,7 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
           color: section.color,
           backdropFilter: 'blur(10px)',
           boxShadow: `0 0 20px ${section.color}${isHovered ? '80' : '40'}`,
-          fontSize: 'clamp(12px, 3vw, 16px)' // Responsive icon size
+          fontSize: 'clamp(12px, 3vw, 16px)'
         }}
         whileHover={{ 
           boxShadow: `0 0 30px ${section.color}`
@@ -459,12 +656,12 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
           left: '50%',
           transform: 'translateX(-50%)',
           marginTop: '0.5rem',
-          padding: 'clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 0.75rem)', // Responsive padding
+          padding: 'clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 0.75rem)',
           background: 'rgba(0, 0, 0, 0.8)',
           border: `1px solid ${section.color}`,
           borderRadius: '4px',
           color: section.color,
-          fontSize: 'clamp(0.5rem, 2vw, 0.75rem)', // Responsive font
+          fontSize: 'clamp(0.5rem, 2vw, 0.75rem)',
           fontWeight: 'bold',
           whiteSpace: 'nowrap',
           backdropFilter: 'blur(10px)',
@@ -474,7 +671,7 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition }) => {
       >
         {section.name}
         <div style={{
-          fontSize: 'clamp(0.4rem, 1.5vw, 0.6rem)', // Responsive
+          fontSize: 'clamp(0.4rem, 1.5vw, 0.6rem)',
           opacity: 0.8,
           marginTop: '0.1rem'
         }}>
