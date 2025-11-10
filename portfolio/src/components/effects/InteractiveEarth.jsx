@@ -77,7 +77,7 @@ function Earth() {
       </mesh>
 
       {/* Satellite Orbits */}
-      <OrbitRing radius={1.8} color="#3b82f6" speed={0.3} />
+      <OrbitRing radius={3.0} color="#3b82f6" speed={0.35} />
 
     </group>
   )
