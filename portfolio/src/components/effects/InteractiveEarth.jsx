@@ -1,4 +1,3 @@
-// portfolio/src/components/effects/InteractiveEarth.jsx
 import { useRef, useMemo } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { Canvas } from '@react-three/fiber'
@@ -10,20 +9,29 @@ function Earth() {
   const earthRef = useRef()
   const cloudsRef = useRef()
   
-  // Use actual Earth textures from online sources
-  const [earthTexture, bumpMap, specularMap] = useLoader(TextureLoader, [
-    // Free NASA Earth texture
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg',
-    // Bump map for terrain
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_normal_2048.jpg',
-    // Specular map for water reflection
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_specular_2048.jpg'
-  ])
+  // Fallback colors since we don't have texture files
+  const earthColor = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 2
+    canvas.height = 2
+    const ctx = canvas.getContext('2d')
+    const gradient = ctx.createLinearGradient(0, 0, 2, 2)
+    gradient.addColorStop(0, '#1e3a8a')
+    gradient.addColorStop(1, '#0ea5e9')
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, 2, 2)
+    return new THREE.CanvasTexture(canvas)
+  }, [])
 
-  // Cloud texture
-  const [cloudTexture] = useLoader(TextureLoader, [
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_clouds_1024.png'
-  ])
+  const cloudsColor = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 2
+    canvas.height = 2
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, 2, 2)
+    return new THREE.CanvasTexture(canvas)
+  }, [])
 
   useFrame((state) => {
     if (earthRef.current) {
@@ -38,53 +46,39 @@ function Earth() {
     <group>
       {/* Stars Background */}
       <Stars 
-        radius={300} 
-        depth={60} 
-        count={8000} 
-        factor={7} 
-        saturation={0.1} 
+        radius={100} 
+        depth={50} 
+        count={5000} 
+        factor={4} 
+        saturation={0} 
         fade 
-        speed={1}
+        speed={0.5}
       />
       
-      {/* Earth with realistic textures */}
+      {/* Earth */}
       <mesh ref={earthRef}>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 32, 32]} />
         <meshPhongMaterial
-          map={earthTexture}
-          bumpMap={bumpMap}
-          bumpScale={0.05}
-          specularMap={specularMap}
+          map={earthColor}
           specular={new THREE.Color(0x333333)}
           shininess={5}
         />
       </mesh>
 
-      {/* Clouds with transparency */}
-      <mesh ref={cloudsRef} scale={[1.005, 1.005, 1.005]}>
-        <sphereGeometry args={[1, 64, 64]} />
+      {/* Clouds */}
+      <mesh ref={cloudsRef} scale={[1.02, 1.02, 1.02]}>
+        <sphereGeometry args={[1, 32, 32]} />
         <meshPhongMaterial
-          map={cloudTexture}
+          map={cloudsColor}
           transparent={true}
           opacity={0.4}
           depthWrite={false}
         />
       </mesh>
 
-      {/* Atmosphere glow effect */}
-      <mesh scale={[1.1, 1.1, 1.1]}>
-        <sphereGeometry args={[1, 64, 64]} />
-        <meshBasicMaterial
-          color={0x0077ff}
-          transparent={true}
-          opacity={0.1}
-          side={THREE.BackSide}
-        />
-      </mesh>
-
       {/* Satellite Orbits */}
-      <OrbitRing radius={2.5} color="#3b82f6" speed={0.15} />
-      
+      <OrbitRing radius={1.8} color="#3b82f6" speed={0.3} />
+
     </group>
   )
 }
@@ -95,16 +89,17 @@ function OrbitRing({ radius, color, speed }) {
   useFrame(() => {
     if (ringRef.current) {
       ringRef.current.rotation.x += speed * 0.01
+      ringRef.current.rotation.z += speed * 0.005
     }
   })
 
   return (
     <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[radius - 0.01, radius + 0.01, 128]} />
+      <ringGeometry args={[radius - 0.02, radius + 0.02, 64]} />
       <meshBasicMaterial
         color={color}
         transparent
-        opacity={0.15}
+        opacity={0.3}
         side={THREE.DoubleSide}
       />
     </mesh>
@@ -118,74 +113,33 @@ function Satellite({ position, color, speed }) {
   useFrame((state) => {
     if (satelliteRef.current && orbitRef.current) {
       const time = state.clock.elapsedTime * speed
-      const x = Math.cos(time) * position[0]
-      const z = Math.sin(time) * position[0]
-      const y = position[1] + Math.sin(time * 2) * 0.1 // Slight vertical movement
+      const x = Math.cos(time) * Math.abs(position[0])
+      const z = Math.sin(time) * Math.abs(position[2] || position[0])
+      const y = Math.sin(time * 0.5) * 0.3
       
       satelliteRef.current.position.set(x, y, z)
-      satelliteRef.current.rotation.y = time + Math.PI / 2
+      satelliteRef.current.rotation.y = time
+      
+      // Make satellite always face direction of movement
+      satelliteRef.current.lookAt(
+        Math.cos(time + 0.1) * Math.abs(position[0]),
+        Math.sin((time + 0.1) * 0.5) * 0.3,
+        Math.sin(time + 0.1) * Math.abs(position[2] || position[0])
+      )
     }
   })
 
   return (
     <group ref={orbitRef}>
       <mesh ref={satelliteRef}>
-        <boxGeometry args={[0.08, 0.03, 0.15]} />
-        <meshStandardMaterial 
-          color={color} 
-          emissive={color}
-          emissiveIntensity={0.3}
-        />
+        <boxGeometry args={[0.05, 0.02, 0.1]} />
+        <meshBasicMaterial color={color} />
       </mesh>
       
       {/* Solar Panels */}
-      <mesh ref={satelliteRef} position={[0, 0, 0.08]}>
-        <boxGeometry args={[0.12, 0.01, 0.02]} />
-        <meshStandardMaterial color="#1e40af" />
+      <mesh position={[0, 0, 0.06]}>
+        <planeGeometry args={[0.08, 0.04]} />
       </mesh>
-    </group>
-  )
-}
-
-// Add some space debris/asteroids for more realism
-function SpaceDebris() {
-  const debrisRef = useRef()
-  
-  const debris = useMemo(() => {
-    const items = []
-    for (let i = 0; i < 50; i++) {
-      items.push({
-        position: [
-          (Math.random() - 0.5) * 10,
-          (Math.random() - 0.5) * 10, 
-          (Math.random() - 0.5) * 10
-        ],
-        rotation: [Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI],
-        scale: Math.random() * 0.02 + 0.005
-      })
-    }
-    return items
-  }, [])
-
-  useFrame((state) => {
-    if (debrisRef.current) {
-      debrisRef.current.rotation.y += 0.0005
-    }
-  })
-
-  return (
-    <group ref={debrisRef}>
-      {debris.map((item, i) => (
-        <mesh
-          key={i}
-          position={item.position}
-          rotation={item.rotation}
-          scale={item.scale}
-        >
-          <sphereGeometry args={[1, 4, 4]} />
-          <meshStandardMaterial color="#64748b" />
-        </mesh>
-      ))}
     </group>
   )
 }
@@ -201,25 +155,20 @@ export default function InteractiveEarth() {
       zIndex: -2,
       pointerEvents: 'none'
     }}>
-      <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
         <color attach="background" args={['#0a0a0f']} />
-        
-        {/* Improved lighting */}
-        <ambientLight intensity={0.4} />
-        <pointLight position={[10, 10, 10]} intensity={1.2} color={0xffffff} />
-        <pointLight position={[-10, -5, -5]} intensity={0.5} color={0x0077ff} />
+        <ambientLight intensity={0.3} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} />
         <spotLight
-          position={[15, 15, 15]}
+          position={[-10, 10, 10]}
           angle={0.3}
           penumbra={1}
-          intensity={0.8}
-          castShadow
+          intensity={1}
         />
         
         <Earth />
-        <SpaceDebris />
         
-        {/* Enhanced controls */}
+        {/* Minimal controls for desktop */}
         <OrbitControls
           enableZoom={false}
           enablePan={false}
@@ -227,8 +176,6 @@ export default function InteractiveEarth() {
           rotateSpeed={0.3}
           maxPolarAngle={Math.PI}
           minPolarAngle={0}
-          autoRotate={true}
-          autoRotateSpeed={0.5}
         />
       </Canvas>
     </div>

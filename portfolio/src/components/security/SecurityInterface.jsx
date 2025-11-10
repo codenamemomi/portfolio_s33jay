@@ -280,12 +280,8 @@ const SecurityInterface = () => {
             </motion.span>
           </div>
           <div>
-            <span style={{ color: '#94a3b8' }}>SATELLITES:</span> 
-            <span style={{ color: '#22d3ee', marginLeft: '0.5rem' }}>12 ACTIVE</span>
-          </div>
-          <div>
             <span style={{ color: '#94a3b8' }}>THREAT LEVEL:</span> 
-            <span style={{ color: '#f59e0b', marginLeft: '0.5rem' }}>NOMINAL</span>
+            <span style={{ color: '#f59e0b', marginLeft: '0.5rem' }}>FRIENDLY</span>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
