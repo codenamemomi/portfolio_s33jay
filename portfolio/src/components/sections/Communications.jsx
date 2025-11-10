@@ -63,7 +63,7 @@ const Communications = () => {
     setError('')
     
     try {
-      const API_URL = 'http://localhost:8000/api/v1/contact'
+      const API_URL = 'https://form-forums.vercel.app/api/v1/contact'
       
       const response = await fetch(API_URL, {
         method: 'POST',
