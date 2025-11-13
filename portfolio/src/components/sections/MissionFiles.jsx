@@ -17,6 +17,18 @@ const MissionFiles = () => {
     },
     {
       id: 2,
+      name: 'DORUP',
+      codename: 'HOUSING AND HOSPITALITY',
+      description: 'End-to-end development of Leading technological innovation and driving the development of cutting-edge solutions.',
+      status: 'ACTIVE',
+      technologies: ['FastAPI', 'React', 'PostgreSQL', 'Docker', 'NGINX'],
+      clearance: 'LEVEL 4',
+      liveUrl: 'https://dorup.vercel.app/',
+      githubUrl: 'https://github.com/codenamemomi/DORUP',
+      color: '#eeb600ff'
+    },
+    {
+      id: 2,
       name: 'KONASALTI TECH',
       codename: 'EDUCATION PLATFORM',
       description: 'End-to-end development of educational platform with course management and user authentication systems.',
