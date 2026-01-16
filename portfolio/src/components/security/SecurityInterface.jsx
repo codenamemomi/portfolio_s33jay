@@ -99,18 +99,30 @@ const SecurityInterface = () => {
   }
 
   // Mouse tracking for parallax
+  // Mouse tracking for parallax - Optimized with requestAnimationFrame
   useEffect(() => {
+    let animationFrameId
+
     const handleMouseMove = (e) => {
-      if (interfaceRef.current) {
-        const rect = interfaceRef.current.getBoundingClientRect()
-        const x = ((e.clientX - rect.left) / rect.width) * 100
-        const y = ((e.clientY - rect.top) / rect.height) * 100
-        setMousePosition({ x, y })
-      }
+      // Throttle updates using requestAnimationFrame to prevent extensive re-renders
+      if (animationFrameId) return
+
+      animationFrameId = requestAnimationFrame(() => {
+        if (interfaceRef.current) {
+          const rect = interfaceRef.current.getBoundingClientRect()
+          const x = ((e.clientX - rect.left) / rect.width) * 100
+          const y = ((e.clientY - rect.top) / rect.height) * 100
+          setMousePosition({ x, y })
+        }
+        animationFrameId = null
+      })
     }
 
     window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+    }
   }, [])
 
   // Lock body scroll when section is open
@@ -319,7 +331,7 @@ const SecurityInterface = () => {
         alignItems: window.innerWidth < 768 ? 'flex-start' : 'center',
         gap: window.innerWidth < 768 ? '0.5rem' : '2rem',
         zIndex: 1000,
-        backdropFilter: 'blur(10px)',
+        backdropFilter: isMobile ? 'none' : 'blur(10px)', // Disable blur on mobile for performance
         pointerEvents: 'none' // Allow clicking through the bar area except for interactive elements if any
       }}>
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -722,7 +734,7 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
           alignItems: 'center',
           justifyContent: 'center',
           color: section.color,
-          backdropFilter: 'blur(10px)',
+          backdropFilter: isMobile ? 'none' : 'blur(10px)',
           fontSize: 'clamp(14px, 3vw, 18px)',
           pointerEvents: 'auto'
         }}
@@ -755,7 +767,7 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
           fontSize: isMobile ? '0.5rem' : 'clamp(0.5rem, 2vw, 0.75rem)',
           fontWeight: 'bold',
           whiteSpace: 'nowrap',
-          backdropFilter: 'blur(10px)',
+          backdropFilter: isMobile ? 'none' : 'blur(10px)',
           textAlign: 'left', // Left-aligned text
           maxWidth: isMobile ? '70vw' : 'none', // Slightly larger since left-aligned
           overflow: 'hidden',
