@@ -39,7 +39,7 @@ const SecurityInterface = () => {
       name: 'COMMAND CENTER',
       icon: <Satellite size={20} />,
       clearance: 'LEVEL 1',
-      position: { x: 20, y: 20 },
+      position: { x: isMobile ? 10 : 20, y: 20 },
       color: '#3b82f6'
     },
     {
@@ -47,7 +47,7 @@ const SecurityInterface = () => {
       name: 'AGENT PROFILE',
       icon: <User size={20} />,
       clearance: 'LEVEL 2',
-      position: { x: 80, y: 25 },
+      position: { x: isMobile ? 70 : 80, y: 25 }, // Moved left on mobile
       color: '#10b981'
     },
     {
@@ -55,7 +55,7 @@ const SecurityInterface = () => {
       name: 'TECHNICAL SPECS',
       icon: <Cpu size={20} />,
       clearance: 'LEVEL 3',
-      position: { x: 30, y: 60 },
+      position: { x: isMobile ? 20 : 30, y: 60 },
       color: '#f59e0b'
     },
     {
@@ -63,7 +63,7 @@ const SecurityInterface = () => {
       name: 'MISSION FILES',
       icon: <Briefcase size={20} />,
       clearance: 'LEVEL 4',
-      position: { x: 70, y: 65 },
+      position: { x: isMobile ? 65 : 70, y: 65 }, // Moved left on mobile
       color: '#8b5cf6'
     },
     {
@@ -71,7 +71,7 @@ const SecurityInterface = () => {
       name: 'OPERATION LOG',
       icon: <Database size={20} />,
       clearance: 'LEVEL 3',
-      position: { x: 85, y: 50 },
+      position: { x: isMobile ? 70 : 85, y: 50 }, // Moved significantly left on mobile
       color: '#ec4899'
     },
     {
@@ -79,7 +79,7 @@ const SecurityInterface = () => {
       name: 'COMMUNICATIONS',
       icon: <Mail size={20} />,
       clearance: 'LEVEL 2',
-      position: { x: 15, y: 80 },
+      position: { x: isMobile ? 15 : 15, y: 80 },
       color: '#06b6d4'
     }
   ]
@@ -239,7 +239,7 @@ const SecurityInterface = () => {
         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent)',
         borderBottom: '1px solid rgba(59, 130, 246, 0.05)',
         backdropFilter: 'blur(10px)',
-        zIndex: 1001,
+        zIndex: 1200, // Above sections (15/20) and status bar (1000)
         pointerEvents: 'none'
       }}>
         {/* Ambient Sound Toggle */}
@@ -627,7 +627,7 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
         top: `${section.position.y}%`,
         transform: 'translate(-50%, -50%)',
         cursor: 'pointer',
-        zIndex: isHovered ? 1110 : 1100 // Above status bar (1000) to ensure clickability
+        zIndex: isHovered ? 20 : 15 // Below nav (1200) and broadcast (1300)
       }}
       animate={{
         scale: isActive ? 1.5 : isHovered ? 1.2 : proximityScale
@@ -734,40 +734,45 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
         {section.icon}
       </motion.div>
 
-      {/* Label - Better mobile positioning */}
+      {/* Label - Always visible on mobile, hover on desktop */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{
-          opacity: isHovered ? 1 : 0,
-          y: isHovered ? 0 : 10
+          opacity: isMobile ? 1 : (isHovered ? 1 : 0),
+          y: isMobile ? 0 : (isHovered ? 0 : 10)
         }}
         style={{
           position: 'absolute',
           top: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginTop: '0.5rem',
-          padding: 'clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 0.75rem)',
-          background: 'rgba(0, 0, 0, 0.8)',
+          left: 0, // Left-aligned instead of centered
+          transform: 'translateX(0)', // No centering transform
+          marginTop: isMobile ? '0.35rem' : '0.5rem',
+          padding: isMobile ? '0.3rem 0.5rem' : 'clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 0.75rem)',
+          background: 'rgba(0, 0, 0, 0.9)',
           border: `1px solid ${section.color}`,
-          borderRadius: '4px',
+          borderRadius: '3px',
           color: section.color,
-          fontSize: 'clamp(0.5rem, 2vw, 0.75rem)',
+          fontSize: isMobile ? '0.5rem' : 'clamp(0.5rem, 2vw, 0.75rem)',
           fontWeight: 'bold',
           whiteSpace: 'nowrap',
           backdropFilter: 'blur(10px)',
-          textAlign: 'center',
-          minWidth: 'max-content'
+          textAlign: 'left', // Left-aligned text
+          maxWidth: isMobile ? '70vw' : 'none', // Slightly larger since left-aligned
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          letterSpacing: '0.05em'
         }}
       >
         {section.name}
-        <div style={{
-          fontSize: 'clamp(0.4rem, 1.5vw, 0.6rem)',
-          opacity: 0.8,
-          marginTop: '0.1rem'
-        }}>
-          {section.clearance}
-        </div>
+        {!isMobile && (
+          <div style={{
+            fontSize: 'clamp(0.4rem, 1.5vw, 0.6rem)',
+            opacity: 0.8,
+            marginTop: '0.1rem'
+          }}>
+            {section.clearance}
+          </div>
+        )}
       </motion.div>
     </motion.div>
   )

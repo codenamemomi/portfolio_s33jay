@@ -237,6 +237,7 @@ const Communications = () => {
                     onChange={handleChange}
                     required
                     autoComplete="off"
+                    placeholder="e.g. John Doe"
                     style={{
                       width: '100%',
                       background: 'rgba(15, 23, 42, 0.3)',
@@ -256,6 +257,7 @@ const Communications = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    placeholder="your.email@domain.com"
                     style={{
                       width: '100%',
                       background: 'rgba(15, 23, 42, 0.3)',
@@ -274,6 +276,7 @@ const Communications = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
+                    placeholder="e.g. Project Inquiry / Collaboration Opportunity"
                     style={{
                       width: '100%',
                       background: 'rgba(15, 23, 42, 0.3)',
@@ -293,6 +296,7 @@ const Communications = () => {
                     onChange={handleChange}
                     required
                     rows={6}
+                    placeholder="Describe your project, inquiry, or message here..."
                     style={{
                       width: '100%',
                       background: 'rgba(15, 23, 42, 0.3)',

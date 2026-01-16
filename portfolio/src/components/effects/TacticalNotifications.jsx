@@ -42,7 +42,7 @@ const TacticalNotifications = () => {
             position: 'fixed',
             top: '5.5rem', // Moved down to avoid top bar
             right: '1rem',
-            zIndex: 1002, // Below scanlines but above most content
+            zIndex: 1300, // Above nav bar (1200) and sections (15/20)
             pointerEvents: 'none',
             width: 'min(280px, calc(100vw - 2rem))', // Smaller and responsive
             display: 'flex',
