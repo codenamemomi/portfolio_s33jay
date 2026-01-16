@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Cpu, Database, Cloud, Code2, Server, Shield, Activity } from 'lucide-react'
 import { portfolioData } from '../../data/portfolioData'
 
@@ -60,6 +60,16 @@ const SkillBar = ({ skill, color }) => {
 
 const TechnicalSpecs = () => {
   const [activeCategory, setActiveCategory] = useState('backend')
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const skillCategories = useMemo(() => {
     const { skills } = portfolioData
@@ -98,11 +108,12 @@ const TechnicalSpecs = () => {
   return (
     <div style={{
       height: '100%',
-      padding: '1.5rem',
+      padding: isMobile ? '1rem' : '1.5rem',
       display: 'flex',
       flexDirection: 'column',
-      gap: '1.5rem',
-      fontFamily: "'JetBrains Mono', monospace"
+      gap: isMobile ? '1rem' : '1.5rem',
+      fontFamily: "'JetBrains Mono', monospace",
+      overflow: 'auto'
     }}>
       {/* Schematic Header */}
       <motion.div
@@ -120,22 +131,27 @@ const TechnicalSpecs = () => {
       <div style={{
         flex: 1,
         display: 'grid',
-        gridTemplateColumns: '220px 1fr',
-        gap: '2rem',
+        gridTemplateColumns: isMobile ? '1fr' : '220px 1fr',
+        gap: isMobile ? '1rem' : '2rem',
         overflow: 'hidden'
       }}>
         {/* Navigation Sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{
+          display: isMobile ? 'grid' : 'flex',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'none',
+          flexDirection: 'column',
+          gap: '0.75rem'
+        }}>
           {Object.entries(skillCategories).map(([key, cat]) => (
             <motion.button
               key={key}
               onClick={() => setActiveCategory(key)}
               style={{
-                padding: '0.75rem 1rem',
+                padding: isMobile ? '0.6rem 0.75rem' : '0.75rem 1rem',
                 background: activeCategory === key ? 'rgba(245, 158, 11, 0.1)' : 'transparent',
                 border: `1px solid ${activeCategory === key ? '#f59e0b' : 'rgba(148, 163, 184, 0.1)'}`,
                 color: activeCategory === key ? '#f59e0b' : '#94a3b8',
-                fontSize: '0.65rem',
+                fontSize: isMobile ? '0.6rem' : '0.65rem',
                 fontWeight: '700',
                 cursor: 'pointer',
                 textAlign: 'left',
@@ -148,24 +164,29 @@ const TechnicalSpecs = () => {
               whileHover={{ borderColor: '#f59e0b66' }}
             >
               {cat.icon}
-              {cat.name}
+              <span style={{ whiteSpace: isMobile ? 'nowrap' : 'normal', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {cat.name}
+              </span>
             </motion.button>
           ))}
 
-          <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
-            <div style={{ fontSize: '0.5rem', color: '#64748b', marginBottom: '0.2rem' }}>SYSTEM_TIME</div>
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{new Date().toLocaleTimeString()}</div>
-          </div>
+          {!isMobile && (
+            <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
+              <div style={{ fontSize: '0.5rem', color: '#64748b', marginBottom: '0.2rem' }}>SYSTEM_TIME</div>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{new Date().toLocaleTimeString()}</div>
+            </div>
+          )}
         </div>
 
         {/* Diagnostic Panel */}
         <div style={{
           background: 'rgba(2, 6, 23, 0.4)',
           border: '1px solid rgba(148, 163, 184, 0.1)',
-          padding: '1.5rem',
+          padding: isMobile ? '1rem' : '1.5rem',
           display: 'flex',
           flexDirection: 'column',
-          position: 'relative'
+          position: 'relative',
+          overflow: 'auto'
         }}>
           <div style={{
             position: 'absolute',

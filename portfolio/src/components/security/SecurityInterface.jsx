@@ -113,6 +113,18 @@ const SecurityInterface = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
 
+  // Lock body scroll when section is open
+  useEffect(() => {
+    if (activeSection) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [activeSection])
+
   // Parallax background springs
   const parallaxBg1 = useSpring({
     transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`
@@ -152,8 +164,8 @@ const SecurityInterface = () => {
       {/* Scanline & Flicker Overlay - Fixed on top of everything but ignoring pointer events */}
       <div className="scanlines crt-flicker" style={{ zIndex: 10000, pointerEvents: 'none' }} />
 
-      {/* Tactical Instructional Notifications */}
-      <TacticalNotifications />
+      {/* Tactical Instructional Notifications - Hide when section is active */}
+      {!activeSection && <TacticalNotifications />}
 
       {/* Parallax Background Layers */}
       <animated.div style={{
@@ -615,7 +627,7 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
         top: `${section.position.y}%`,
         transform: 'translate(-50%, -50%)',
         cursor: 'pointer',
-        zIndex: isHovered ? 20 : 10
+        zIndex: isHovered ? 1110 : 1100 // Above status bar (1000) to ensure clickability
       }}
       animate={{
         scale: isActive ? 1.5 : isHovered ? 1.2 : proximityScale
@@ -625,14 +637,14 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
       onHoverEnd={() => setIsHovered(false)}
       onClick={onClick}
     >
-      {/* Pulse Effect */}
+      {/* Enhanced Pulse Effect */}
       <motion.div
         animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0, 0.5, 0]
+          scale: [1, 1.5, 1],
+          opacity: [0.3, 0.7, 0.3]
         }}
         transition={{
-          duration: 3,
+          duration: 2,
           repeat: Infinity,
           delay: Math.random() * 2
         }}
@@ -641,11 +653,12 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'clamp(50px, 12vw, 90px)',
-          height: 'clamp(50px, 12vw, 90px)',
-          background: `radial-gradient(circle, ${section.color}30 0%, transparent 70%)`,
+          width: 'clamp(70px, 15vw, 110px)',
+          height: 'clamp(70px, 15vw, 110px)',
+          background: `radial-gradient(circle, ${section.color}50 0%, ${section.color}20 50%, transparent 70%)`,
           borderRadius: '50%',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          filter: 'blur(2px)'
         }}
       />
 
@@ -664,39 +677,45 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: isMobile ? 'clamp(30px, 12vw, 40px)' : 'clamp(40px, 10vw, 80px)',
-          height: isMobile ? 'clamp(30px, 12vw, 40px)' : 'clamp(40px, 10vw, 80px)',
+          width: isMobile ? 'clamp(38px, 12vw, 48px)' : 'clamp(40px, 10vw, 80px)',
+          height: isMobile ? 'clamp(38px, 12vw, 48px)' : 'clamp(40px, 10vw, 80px)',
           border: `2px solid ${section.color}`,
           borderRadius: '50%',
           opacity: isHovered ? 0.8 : 0.4
         }}
       />
 
-      {/* Glow Effect - Responsive */}
+      {/* Enhanced Glow Effect - Responsive */}
       <motion.div
         animate={{
-          opacity: isHovered ? 0.6 : proximityGlow * 0.3,
-          scale: isHovered ? 1.5 : 1
+          opacity: isHovered ? 0.9 : proximityGlow * 0.5,
+          scale: isHovered ? 2 : 1.2
         }}
+        transition={{ duration: 0.3 }}
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'clamp(30px, 8vw, 60px)',
-          height: 'clamp(30px, 8vw, 60px)',
-          background: `radial-gradient(circle, ${section.color}40 0%, transparent 70%)`,
+          width: 'clamp(48px, 10vw, 80px)',
+          height: 'clamp(48px, 10vw, 80px)',
+          background: `radial-gradient(circle, ${section.color}60 0%, ${section.color}30 40%, transparent 70%)`,
           borderRadius: '50%',
-          filter: 'blur(8px)'
+          filter: 'blur(12px)'
         }}
       />
 
-      {/* Main Icon - Responsive */}
+      {/* Main Icon - Enhanced */}
       <motion.div
+        animate={{
+          boxShadow: isHovered
+            ? `0 0 40px ${section.color}, 0 0 20px ${section.color}80, inset 0 0 15px ${section.color}40`
+            : `0 0 25px ${section.color}60, 0 0 10px ${section.color}40`
+        }}
         style={{
-          width: 'clamp(30px, 8vw, 50px)',
-          height: 'clamp(30px, 8vw, 50px)',
-          background: `linear-gradient(135deg, ${section.color}20, ${section.color}40)`,
+          width: 'clamp(42px, 8vw, 58px)',
+          height: 'clamp(42px, 8vw, 58px)',
+          background: `linear-gradient(135deg, ${section.color}30, ${section.color}50)`,
           border: `2px solid ${section.color}`,
           borderRadius: '50%',
           display: 'flex',
@@ -704,12 +723,12 @@ const SectionTarget = ({ section, isActive, onClick, mousePosition, isMobile }) 
           justifyContent: 'center',
           color: section.color,
           backdropFilter: 'blur(10px)',
-          boxShadow: `0 0 20px ${section.color}${isHovered ? '80' : '40'}`,
-          fontSize: 'clamp(12px, 3vw, 16px)',
+          fontSize: 'clamp(14px, 3vw, 18px)',
           pointerEvents: 'auto'
         }}
         whileHover={{
-          boxShadow: `0 0 30px ${section.color}`
+          scale: 1.15,
+          background: `linear-gradient(135deg, ${section.color}40, ${section.color}60)`
         }}
       >
         {section.icon}

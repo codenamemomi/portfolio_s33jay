@@ -40,11 +40,11 @@ const TacticalNotifications = () => {
     return (
         <div style={{
             position: 'fixed',
-            top: '2rem',
-            right: '2rem',
-            zIndex: 10000,
+            top: '5.5rem', // Moved down to avoid top bar
+            right: '1rem',
+            zIndex: 1002, // Below scanlines but above most content
             pointerEvents: 'none',
-            width: '340px',
+            width: 'min(280px, calc(100vw - 2rem))', // Smaller and responsive
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -61,12 +61,13 @@ const TacticalNotifications = () => {
                         style={{
                             background: 'rgba(2, 6, 23, 0.95)',
                             border: `1px solid ${currentNotification.color}88`,
-                            borderLeft: `5px solid ${currentNotification.color}`,
-                            padding: '1.25rem',
+                            borderLeft: `4px solid ${currentNotification.color}`,
+                            padding: '0.85rem 1rem',
                             backdropFilter: 'blur(15px)',
-                            boxShadow: `0 0 30px ${currentNotification.color}33`,
+                            boxShadow: `0 0 20px ${currentNotification.color}22`,
                             position: 'relative',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            borderRadius: '2px'
                         }}
                     >
                         {/* Visual Glitch Elements */}
@@ -102,7 +103,7 @@ const TacticalNotifications = () => {
                             />
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
                             <motion.span
                                 animate={{ rotate: [0, 10, -10, 0] }}
                                 transition={{ duration: 2, repeat: Infinity }}
@@ -111,23 +112,23 @@ const TacticalNotifications = () => {
                                 {currentNotification.icon}
                             </motion.span>
                             <span style={{
-                                fontSize: '0.65rem',
+                                fontSize: '0.55rem',
                                 fontWeight: '900',
                                 color: currentNotification.color,
-                                letterSpacing: '0.25em',
-                                textShadow: `0 0 10px ${currentNotification.color}66`
+                                letterSpacing: '0.2em',
+                                textShadow: `0 0 8px ${currentNotification.color}66`
                             }}>
                                 [ {currentNotification.type}_BROADCAST ]
                             </span>
                         </div>
 
                         <p style={{
-                            fontSize: '0.8rem',
+                            fontSize: '0.7rem',
                             color: '#f8fafc',
                             margin: 0,
-                            lineHeight: 1.6,
-                            fontWeight: '700',
-                            letterSpacing: '0.02em'
+                            lineHeight: 1.5,
+                            fontWeight: '600',
+                            letterSpacing: '0.01em'
                         }}>
                             {currentNotification.text}
                         </p>
