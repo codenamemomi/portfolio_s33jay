@@ -1,52 +1,51 @@
 import { motion } from 'framer-motion'
-import { Cpu, Code2, Zap, Shield, Satellite, Terminal } from 'lucide-react'
+import { Cpu, Code2, Zap, Shield, Satellite, Terminal, Lock, Activity } from 'lucide-react'
 
 const CommandCenter = ({ mousePosition }) => {
   const techIcons = [
-    { icon: <Cpu style={{ width: '20px', height: '20px' }} />, name: 'FastAPI' },
-    { icon: <Code2 style={{ width: '20px', height: '20px' }} />, name: 'React' },
-    { icon: <Zap style={{ width: '20px', height: '20px' }} />, name: 'Python' },
-    { icon: <Shield style={{ width: '20px', height: '20px' }} />, name: 'Security' },
+    { icon: <Cpu style={{ width: 14, height: 14 }} />, name: 'FAST_API' },
+    { icon: <Code2 style={{ width: 14, height: 14 }} />, name: 'REACT_FRAMEWORK' },
+    { icon: <Zap style={{ width: 14, height: 14 }} />, name: 'PYTHON_CORE' },
+    { icon: <Shield style={{ width: 14, height: 14 }} />, name: 'SECURITY_OPS' },
   ]
 
-  const dataStreams = Array.from({ length: 15 }, (_, i) => ({
+  const dataStreams = Array.from({ length: 12 }, (_, i) => ({
     id: i,
-    text: Math.random() > 0.5 ? '1' : '0',
-    delay: Math.random() * 5
+    text: Math.random().toString(16).substring(2, 8).toUpperCase(),
+    delay: Math.random() * 8
   }))
 
   return (
-    <div style={{ 
-      height: '100%', 
+    <div style={{
+      height: '100%',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      fontFamily: "'JetBrains Mono', monospace",
+      color: '#60a5fa'
     }}>
-      {/* Animated Data Stream */}
+      {/* Tactical Data Stream Overlay */}
       <div style={{
         position: 'absolute',
         top: 0,
-        left: 0,
-        width: '100%',
+        right: '1rem',
+        width: '60px',
         height: '100%',
         pointerEvents: 'none',
-        opacity: 0.1
+        opacity: 0.15,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem'
       }}>
         {dataStreams.map((stream) => (
           <motion.div
             key={stream.id}
-            style={{
-              position: 'absolute',
-              left: `${Math.random() * 100}%`,
-              color: '#00ff00',
-              fontFamily: 'Courier New, monospace',
-              fontSize: '12px'
-            }}
+            style={{ fontSize: '10px' }}
             animate={{
-              y: ['-100%', '100%'],
-              opacity: [0, 1, 0]
+              opacity: [0, 1, 0],
+              y: [0, 20]
             }}
             transition={{
-              duration: 2 + Math.random() * 3,
+              duration: 4,
               repeat: Infinity,
               delay: stream.delay
             }}
@@ -56,290 +55,168 @@ const CommandCenter = ({ mousePosition }) => {
         ))}
       </div>
 
-      {/* Main Content Container */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        padding: '1rem',
-        gap: '1rem'
+        padding: '1.5rem',
+        gap: '1.5rem'
       }}>
-        {/* Header Section */}
+        {/* Console Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          style={{
-            flexShrink: 0
-          }}
+          style={{ flexShrink: 0 }}
         >
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '0.5rem'
-          }}>
-            <Satellite style={{ width: '24px', height: '24px', color: '#3b82f6' }} />
-            <h1 style={{
-              color: '#3b82f6',
-              fontSize: '1.25rem',
-              fontWeight: 'bold',
-              fontFamily: 'Courier New, monospace',
-              margin: 0
-            }}>
-              COMMAND CENTER // AGENT PROFILE
-            </h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <Terminal style={{ width: 18, height: 18, color: '#3b82f6' }} />
+              <h1 style={{ fontSize: '1rem', fontWeight: '800', letterSpacing: '0.05em', margin: 0 }}>OPERATIVE_INTERFACE_V1.0</h1>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.6rem', opacity: 0.7 }}>
+              <Lock style={{ width: 12, height: 12 }} />
+              ENCRYPTION: AES-256
+            </div>
           </div>
-          
-          <div style={{
-            padding: '0.75rem',
-            background: 'rgba(30, 41, 59, 0.5)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
-            borderRadius: '0.5rem',
-            fontFamily: 'Courier New, monospace',
-            fontSize: '0.75rem',
-            color: '#60a5fa'
-          }}>
-            SYSTEM STATUS: ONLINE | AGENT: AKINROGUNDE, O. | CLEARANCE: LEVEL 1
-          </div>
+          <div style={{ height: '1px', width: '100%', background: 'linear-gradient(90deg, #3b82f644, transparent 100%)' }} />
         </motion.div>
 
-        {/* Scrollable Content Area */}
         <div style={{
           flex: 1,
           display: 'grid',
           gridTemplateColumns: '1fr',
-          gap: '1rem',
+          gap: '1.5rem',
           overflowY: 'auto',
           paddingRight: '0.5rem'
         }}>
-          {/* Agent Identity Card */}
+          {/* Operative Identity */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
             style={{
               padding: '1.5rem',
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '1rem',
-              backdropFilter: 'blur(10px)'
+              background: 'rgba(15, 23, 42, 0.4)',
+              borderLeft: '4px solid #3b82f6',
+              position: 'relative'
             }}
           >
+            <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#3b82f6', marginBottom: '1rem' }}>IDENT_CONFIRMED: ACTIVE_AGENT</div>
             <h2 style={{
-              color: '#e2e8f0',
-              fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-              fontWeight: 'bold',
-              marginBottom: '1rem',
-              background: 'linear-gradient(135deg, #60a5fa, #a78bfa)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              lineHeight: '1.2'
+              fontSize: '2rem',
+              fontWeight: '900',
+              color: '#f8fafc',
+              margin: 0,
+              lineHeight: '1',
+              letterSpacing: '-0.03em'
             }}>
-              OMOMIJOLAOLUWA
-              <br />
-              <span style={{ 
-                color: '#cbd5e1', 
-                fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
-                background: 'none',
-                WebkitTextFillColor: '#cbd5e1'
-              }}>
-                AKINROGUNDE
-              </span>
+              AKINROGUNDE.O
             </h2>
-            
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '1rem',
-              padding: '0.5rem 0.75rem',
-              background: 'rgba(59, 130, 246, 0.1)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '0.5rem',
-              width: 'fit-content'
+              marginTop: '1rem',
+              fontSize: '0.8rem',
+              color: '#94a3b8',
+              lineHeight: '1.6',
+              maxWidth: '450px'
             }}>
-              <Zap style={{ width: '14px', height: '14px', color: '#60a5fa' }} />
-              <span style={{ 
-                color: '#60a5fa', 
-                fontWeight: '600',
-                fontSize: '0.875rem'
-              }}>
-                SECURITY-FOCUSED FULL STACK DEVELOPER
-              </span>
+              Engineering <span style={{ color: '#60a5fa' }}>secure digital ecosystems</span>. Specialized in
+              high-performance backend architectures and responsive intelligence interfaces.
+              Currently assigned to: <span style={{ color: '#10b981' }}>Strategic Ops // Web3 Integration</span>.
             </div>
 
-            <p style={{
-              color: '#cbd5e1',
-              lineHeight: '1.6',
-              fontSize: '0.9rem',
-              marginBottom: '1.5rem'
-            }}>
-              Building <span style={{ color: '#60a5fa', fontWeight: '500' }}>scalable, secure applications</span> with 
-              Python, JavaScript, and cutting-edge technologies. Specializing in 
-              <span style={{ color: '#a78bfa', fontWeight: '500' }}> blockchain integration</span> and 
-              <span style={{ color: '#10b981', fontWeight: '500' }}> AI-driven solutions</span>.
-            </p>
-
-            {/* Tech Stack */}
-            <div style={{
-              display: 'flex',
-              gap: '0.75rem',
-              flexWrap: 'wrap'
-            }}>
-              {techIcons.map((tech, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem 0.75rem',
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                    borderRadius: '0.5rem',
-                    color: '#60a5fa'
-                  }}
-                  whileHover={{ 
-                    scale: 1.05,
-                    background: 'rgba(59, 130, 246, 0.2)'
-                  }}
-                >
+            {/* Tactical Chips */}
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+              {techIcons.map((tech, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.4rem 0.6rem',
+                  background: 'rgba(30, 41, 59, 0.4)',
+                  fontSize: '0.6rem',
+                  fontWeight: '700',
+                  border: '1px solid rgba(148, 163, 184, 0.1)',
+                  borderRadius: '2px'
+                }}>
                   {tech.icon}
-                  <span style={{ 
-                    fontSize: '0.75rem', 
-                    fontWeight: '500' 
-                  }}>
-                    {tech.name}
-                  </span>
-                </motion.div>
+                  {tech.name}
+                </div>
               ))}
             </div>
           </motion.div>
 
-          {/* System Status Grid */}
+          {/* Grid: Diagnostics & Missions */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '1rem'
           }}>
-            {/* System Status */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              style={{
-                padding: '1.25rem',
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                borderRadius: '1rem',
-                backdropFilter: 'blur(10px)'
-              }}
-            >
-              <h3 style={{
-                color: '#10b981',
-                fontSize: '0.9rem',
-                fontWeight: 'bold',
-                marginBottom: '1rem',
-                fontFamily: 'Courier New, monospace'
-              }}>
-                SYSTEM STATUS
-              </h3>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                fontSize: '0.75rem',
-                color: '#cbd5e1',
-                fontFamily: 'Courier New, monospace'
-              }}>
-                <div>SECURITY: <span style={{ color: '#10b981' }}>ACTIVE</span></div>
-                <div>BLOCKCHAIN: <span style={{ color: '#10b981' }}>ONLINE</span></div>
-                <div>AI SYSTEMS: <span style={{ color: '#10b981' }}>OPERATIONAL</span></div>
-                <div>DATABASE: <span style={{ color: '#10b981' }}>SECURE</span></div>
+            {/* Real-time Diagnostics */}
+            <div style={{
+              padding: '1.25rem',
+              background: 'rgba(2, 6, 23, 0.4)',
+              border: '1px solid rgba(148, 163, 184, 0.1)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Activity style={{ width: 14, height: 14, color: '#10b981' }} />
+                <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#10b981' }}>SYSTEM_DIAGNOSTICS</span>
               </div>
-            </motion.div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.65rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ opacity: 0.6 }}>NETWORK_LOAD</span>
+                  <span style={{ color: '#10b981' }}>NORMAL</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ opacity: 0.6 }}>DATABASE_SYNC</span>
+                  <span style={{ color: '#10b981' }}>HEALTHY</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ opacity: 0.6 }}>SECURITY_MESH</span>
+                  <span style={{ color: '#10b981' }}>ACTIVE</span>
+                </div>
+              </div>
+            </div>
 
-            {/* Active Missions */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              style={{
-                padding: '1.25rem',
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                borderRadius: '1rem',
-                backdropFilter: 'blur(10px)'
-              }}
-            >
-              <h3 style={{
-                color: '#f59e0b',
-                fontSize: '0.9rem',
-                fontWeight: 'bold',
-                marginBottom: '1rem',
-                fontFamily: 'Courier New, monospace'
-              }}>
-                ACTIVE OPERATIONS
-              </h3>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-              }}>
-                {['KANEC BLOCKCHAIN', 'SECURE API DEV', 'AI INTEGRATION'].map((mission, index) => (
-                  <motion.div
-                    key={mission}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 + index * 0.2 }}
-                    style={{
-                      padding: '0.5rem',
-                      background: 'rgba(30, 41, 59, 0.5)',
-                      border: '1px solid rgba(245, 158, 11, 0.2)',
-                      borderRadius: '0.25rem',
-                      color: '#fbbf24',
-                      fontSize: '0.7rem',
-                      fontFamily: 'Courier New, monospace'
-                    }}
-                    whileHover={{ 
-                      borderColor: 'rgba(245, 158, 11, 0.4)',
-                      background: 'rgba(245, 158, 11, 0.1)'
-                    }}
-                  >
-                    {mission}
-                  </motion.div>
+            {/* Current Objectives */}
+            <div style={{
+              padding: '1.25rem',
+              background: 'rgba(2, 6, 23, 0.4)',
+              border: '1px solid rgba(148, 163, 184, 0.1)'
+            }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#fbbf24', marginBottom: '1rem' }}>CURRENT_OBJECTIVES</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {['BLOCKCHAIN_CORE_V2', 'AI_PIPELINE_MOD', 'SECURE_UPLINK'].map(obj => (
+                  <div key={obj} style={{
+                    fontSize: '0.6rem',
+                    padding: '0.4rem',
+                    background: 'rgba(251, 191, 36, 0.05)',
+                    borderLeft: '2px solid #fbbf24',
+                    opacity: 0.8
+                  }}>
+                    {obj}
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          {/* Coordinates Display */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            style={{
-              padding: '1rem',
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              borderRadius: '0.5rem',
-              backdropFilter: 'blur(10px)',
-              fontFamily: 'Courier New, monospace',
-              fontSize: '0.7rem',
-              color: '#a78bfa'
-            }}
-          >
-            MOUSE TRACKING: {Math.round(mousePosition.x)}%, {Math.round(mousePosition.y)}%
-            <br />
-            TIMESTAMP: {new Date().toLocaleTimeString()}
-            <br />
-            SATELLITE FEED: ACTIVE | ENCRYPTION: ENABLED
-          </motion.div>
+          {/* Footer Telemetry */}
+          <div style={{
+            padding: '1rem',
+            background: 'rgba(2, 6, 23, 0.6)',
+            fontSize: '0.6rem',
+            color: '#64748b',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderTop: '1px solid rgba(148, 163, 184, 0.05)'
+          }}>
+            <div>LOC: {Math.round(mousePosition.x)}, {Math.round(mousePosition.y)} // FEED: LIVE</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+              UP-TIME: 14:22:04
+            </div>
+          </div>
         </div>
       </div>
     </div>

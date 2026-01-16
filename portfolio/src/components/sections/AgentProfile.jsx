@@ -1,15 +1,17 @@
 import { motion } from 'framer-motion'
 import { User, Shield, MessageSquare, Cpu, Database, Cloud } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { portfolioData } from '../../data/portfolioData'
 
 const AgentProfile = () => {
   const [isMobile, setIsMobile] = useState(false)
+  const { personal, education } = portfolioData
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024)
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -17,311 +19,209 @@ const AgentProfile = () => {
 
   const features = [
     {
-      icon: <Cpu style={{ width: 'clamp(20px, 4vw, 24px)', height: 'clamp(20px, 4vw, 24px)' }} />,
-      title: "FULL-STACK DEVELOPMENT",
-      description: "Building end-to-end solutions with modern technologies and security protocols.",
+      icon: <Cpu style={{ width: 22, height: 22 }} />,
+      title: "FULL-STACK OPS",
+      description: "Development of resilient, end-to-end digital infrastructure using modern security protocols.",
       color: '#3b82f6'
     },
     {
-      icon: <Shield style={{ width: 'clamp(20px, 4vw, 24px)', height: 'clamp(20px, 4vw, 24px)' }} />,
-      title: "SECURITY FIRST",
-      description: "Cybersecurity-trained operative focused on building secure, robust applications.",
+      icon: <Shield style={{ width: 22, height: 22 }} />,
+      title: "SECURITY ARCHITECT",
+      description: "Implementing advanced defensive measures and secure-by-default logic across all software layers.",
       color: '#10b981'
     },
     {
-      icon: <MessageSquare style={{ width: 'clamp(20px, 4vw, 24px)', height: 'clamp(20px, 4vw, 24px)' }} />,
-      title: "COMMUNICATIONS EXPERT",
-      description: "Mass Communication background enables effective stakeholder communication.",
+      icon: <MessageSquare style={{ width: 22, height: 22 }} />,
+      title: "STRATEGIC COMMS",
+      description: "Leveraging background in Mass Communication for high-impact stakeholder engagement and clarity.",
       color: '#8b5cf6'
     }
   ]
 
   const stats = [
-    { number: "10+", label: "MISSIONS COMPLETED", icon: <Database style={{ width: 'clamp(14px, 3vw, 16px)', height: 'clamp(14px, 3vw, 16px)' }} /> },
-    { number: "2+", label: "YEARS ACTIVE SERVICE", icon: <Cloud style={{ width: 'clamp(14px, 3vw, 16px)', height: 'clamp(14px, 3vw, 16px)' }} /> },
-    { number: "5+", label: "SPECIALTIES MASTERED", icon: <Cpu style={{ width: 'clamp(14px, 3vw, 16px)', height: 'clamp(14px, 3vw, 16px)' }} /> }
+    { number: "18+", label: "SUCCESSFUL MISSIONS", icon: <Database style={{ width: 14, height: 14 }} /> },
+    { number: "02+", label: "YEARS FIELD SERVICE", icon: <Cloud style={{ width: 14, height: 14 }} /> },
+    { number: "10+", label: "SPECIALIZED SKILLS", icon: <Cpu style={{ width: 14, height: 14 }} /> }
   ]
 
   return (
-    <div style={{ 
-      height: '100%', 
-      padding: isMobile ? '1rem' : '2rem', 
+    <div style={{
+      height: '100%',
+      padding: '1.5rem',
       overflowY: 'auto',
-      overflowX: 'hidden'
+      fontFamily: "'JetBrains Mono', monospace",
+      color: '#f8fafc'
     }}>
+      {/* Dossier Header */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: isMobile ? '1rem' : '2rem' }}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        style={{ marginBottom: '2rem', position: 'relative' }}
       >
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: isMobile ? '0.5rem' : '1rem',
-          marginBottom: isMobile ? '0.5rem' : '1rem',
-          flexWrap: 'wrap'
+          gap: '1rem',
+          marginBottom: '1rem'
         }}>
-          <User style={{ 
-            width: isMobile ? '24px' : '28px', 
-            height: isMobile ? '24px' : '28px', 
-            color: '#10b981' 
-          }} />
+          <div style={{
+            padding: '0.6rem',
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid #10b98144',
+            borderRadius: '0.25rem'
+          }}>
+            <User style={{ width: 24, height: 24, color: '#10b981' }} />
+          </div>
           <h1 style={{
             color: '#10b981',
-            fontSize: isMobile ? '1.1rem' : '1.5rem',
-            fontWeight: 'bold',
-            fontFamily: 'Courier New, monospace',
+            fontSize: '1.5rem',
+            fontWeight: '800',
+            letterSpacing: '-0.02em',
             margin: 0
           }}>
-            AGENT PROFILE // BACKGROUND ANALYSIS
+            OPERATIVE_DOSSIER: {personal.name.split(' ').pop().toUpperCase()}
           </h1>
         </div>
-        
+
         <div style={{
-          padding: isMobile ? '0.75rem' : '1rem',
-          background: 'rgba(30, 41, 59, 0.5)',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          borderRadius: '0.5rem',
-          fontFamily: 'Courier New, monospace',
-          fontSize: isMobile ? '0.7rem' : '0.875rem',
-          color: '#34d399',
-          wordBreak: 'break-word'
+          padding: '0.5rem 1rem',
+          background: 'rgba(2, 6, 23, 0.6)',
+          borderLeft: '4px solid #10b981',
+          fontSize: '0.7rem',
+          color: '#94a3b8',
+          letterSpacing: '0.05em'
         }}>
-          AGENT STATUS: ACTIVE | SECURITY CLEARANCE: LEVEL 2 | PROFILE: UNCLASSIFIED
+          STATUS: ACTIVE-DUTY // CLEARANCE: LEVEL 02 // ACCESS: GRANTED
+        </div>
+
+        {/* TOP SECRET STAMP - Visual only */}
+        <div style={{
+          position: 'absolute',
+          top: '-10px',
+          right: '0',
+          padding: '0.25rem 0.5rem',
+          border: '3px solid rgba(239, 68, 68, 0.2)',
+          borderRadius: '4px',
+          color: 'rgba(239, 68, 68, 0.2)',
+          fontSize: '1rem',
+          fontWeight: '900',
+          transform: 'rotate(15deg)',
+          userSelect: 'none',
+          pointerEvents: 'none'
+        }}>
+          APPROVED
         </div>
       </motion.div>
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: isMobile ? '1.5rem' : '2rem',
-        height: '100%',
-        overflow: 'visible'
+        gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr',
+        gap: '2.5rem'
       }}>
-        {/* Left Column - Profile Data */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: isMobile ? '1.5rem' : '2rem'
-        }}>
+        {/* Biography Section */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <motion.div
-            initial={{ opacity: 0, x: isMobile ? 0 : -50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
             style={{
-              padding: isMobile ? '1.5rem' : '2rem',
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              borderRadius: '1rem',
-              backdropFilter: 'blur(10px)',
-              minHeight: isMobile ? 'auto' : '300px'
+              padding: '1.5rem',
+              background: 'rgba(15, 23, 42, 0.3)',
+              border: '1px solid rgba(148, 163, 184, 0.1)',
+              borderRadius: '0.25rem',
+              position: 'relative'
             }}
           >
-            <h2 style={{
-              color: '#e2e8f0',
-              fontSize: isMobile ? '1.2rem' : '1.5rem',
-              fontWeight: 'bold',
-              marginBottom: isMobile ? '1rem' : '1.5rem'
-            }}>
-              OPERATIVE BACKGROUND
-            </h2>
-            
+            <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: '800', marginBottom: '1rem' }}>RECORD: PERSONAL_HISTORY</div>
             <div style={{
+              color: '#94a3b8',
+              lineHeight: '1.75',
+              fontSize: '0.9rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: isMobile ? '0.75rem' : '1rem',
-              color: '#cbd5e1',
-              lineHeight: '1.7',
-              fontSize: isMobile ? '0.9rem' : '1rem'
+              gap: '1rem'
             }}>
               <p>
-                Agent <span style={{ color: '#10b981', fontWeight: '600' }}>Akinrogunde</span> combines 
-                advanced technical training in <span style={{ color: '#3b82f6', fontWeight: '600' }}>cybersecurity</span> with 
-                specialized background in <span style={{ color: '#8b5cf6', fontWeight: '600' }}>Mass Communication</span>. 
-                This unique operational profile enables development of secure, user-focused digital solutions.
+                Operative <span style={{ color: '#f8fafc' }}>{personal.name}</span> bridges the gap between
+                <span style={{ color: '#10b981' }}> technical engineering</span> and <span style={{ color: '#8b5cf6' }}> strategic communication</span>.
               </p>
-              
+
               <p>
-                Primary expertise includes <span style={{ color: '#f59e0b', fontWeight: '600' }}>Python-based systems</span>, 
-                <span style={{ color: '#ec4899', fontWeight: '600' }}> JavaScript frameworks</span>, and advanced 
-                <span style={{ color: '#06b6d4', fontWeight: '600' }}> DevOps protocols</span>. Currently pioneering 
-                operations in blockchain and AI integration sectors.
-              </p>
-              
-              <p>
-                Operational philosophy emphasizes <span style={{ color: '#10b981', fontWeight: '600' }}>security-first development</span>, 
-                scalable architecture, and clear communication with command structure and stakeholders.
+                {personal.bio}
               </p>
             </div>
           </motion.div>
 
-          {/* Stats Grid */}
+          {/* Stats Bar */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
-            gap: isMobile ? '0.75rem' : '1rem'
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '1rem'
           }}>
-            {stats.map((stat, index) => (
+            {stats.map((stat, idx) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
+                transition={{ delay: 0.4 + idx * 0.1 }}
                 style={{
-                  textAlign: 'center',
-                  padding: isMobile ? '1rem 0.5rem' : '1.5rem 1rem',
-                  background: 'rgba(30, 41, 59, 0.5)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
-                  borderRadius: '1rem',
-                  backdropFilter: 'blur(10px)',
-                  minWidth: isMobile ? '120px' : 'auto'
-                }}
-                whileHover={{ 
-                  scale: 1.05,
-                  borderColor: 'rgba(16, 185, 129, 0.4)'
+                  padding: '1.25rem 0.5rem',
+                  background: 'rgba(2, 6, 23, 0.4)',
+                  border: '1px solid rgba(148, 163, 184, 0.05)',
+                  textAlign: 'center'
                 }}
               >
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: isMobile ? '32px' : '40px',
-                  height: isMobile ? '32px' : '40px',
-                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                  borderRadius: '0.75rem',
-                  margin: '0 auto 0.5rem auto',
-                  color: '#34d399'
-                }}>
-                  {stat.icon}
-                </div>
-                <div style={{
-                  fontSize: isMobile ? '1.25rem' : '1.5rem',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  marginBottom: '0.25rem'
-                }}>
-                  {stat.number}
-                </div>
-                <div style={{
-                  fontSize: isMobile ? '0.65rem' : '0.75rem',
-                  color: '#94a3b8',
-                  fontWeight: '500',
-                  fontFamily: 'Courier New, monospace',
-                  lineHeight: '1.2'
-                }}>
-                  {stat.label}
-                </div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#f8fafc', marginBottom: '0.25rem' }}>{stat.number}</div>
+                <div style={{ fontSize: '0.55rem', color: '#64748b', fontWeight: '700', letterSpacing: '0.05em' }}>{stat.label}</div>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Right Column - Specializations */}
-        <motion.div
-          initial={{ opacity: 0, x: isMobile ? 0 : 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: isMobile ? '1rem' : '1.5rem'
-          }}
-        >
-          {features.map((feature, index) => (
+        {/* Specialties & Intelligence */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ fontSize: '0.7rem', color: '#8b5cf6', fontWeight: '800', letterSpacing: '0.05em' }}>FIELD_SPECIALTIES</div>
+          {features.map((feature, idx) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 + index * 0.2 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + idx * 0.1 }}
               style={{
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: isMobile ? '0.75rem' : '1rem',
-                padding: isMobile ? '1rem' : '1.5rem',
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: `1px solid ${feature.color}30`,
-                borderRadius: '1rem',
-                backdropFilter: 'blur(10px)',
-                minHeight: isMobile ? 'auto' : '140px'
+                gap: '1rem',
+                padding: '1rem',
+                background: 'rgba(15, 23, 42, 0.2)',
+                borderLeft: `2px solid ${feature.color}44`,
+                alignItems: 'center'
               }}
-              whileHover={{ 
-                scale: isMobile ? 1.02 : 1.02,
-                borderColor: `${feature.color}60`,
-                boxShadow: `0 10px 30px -10px ${feature.color}20`
-              }}
+              whileHover={{ background: 'rgba(15, 23, 42, 0.4)', borderLeftColor: feature.color }}
             >
-              <div style={{
-                flexShrink: 0,
-                padding: isMobile ? '0.5rem' : '0.75rem',
-                background: `linear-gradient(135deg, ${feature.color}20, ${feature.color}40)`,
-                borderRadius: '0.75rem',
-                color: feature.color
-              }}>
-                {feature.icon}
-              </div>
-              <div style={{ flex: 1 }}>
-                <h4 style={{
-                  fontSize: isMobile ? '0.9rem' : '1rem',
-                  fontWeight: '600',
-                  marginBottom: isMobile ? '0.25rem' : '0.5rem',
-                  color: feature.color,
-                  fontFamily: 'Courier New, monospace',
-                  lineHeight: '1.2'
-                }}>
-                  {feature.title}
-                </h4>
-                <p style={{
-                  color: '#cbd5e1',
-                  lineHeight: '1.6',
-                  fontSize: isMobile ? '0.8rem' : '0.9rem'
-                }}>
-                  {feature.description}
-                </p>
+              <div style={{ color: feature.color, opacity: 0.8 }}>{feature.icon}</div>
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: '800', color: feature.color, marginBottom: '0.2rem' }}>{feature.title}</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.4' }}>{feature.description}</div>
               </div>
             </motion.div>
           ))}
 
-          {/* Education Record */}
+          {/* Training Record Tag */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.9 }}
             style={{
-              padding: isMobile ? '1rem' : '1.5rem',
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              borderRadius: '1rem',
-              backdropFilter: 'blur(10px)'
+              marginTop: '1rem',
+              padding: '1rem',
+              border: '1px dashed rgba(148, 163, 184, 0.2)',
+              borderRadius: '0.25rem'
             }}
           >
-            <h3 style={{
-              color: '#8b5cf6',
-              fontSize: isMobile ? '0.9rem' : '1rem',
-              fontWeight: 'bold',
-              marginBottom: isMobile ? '0.75rem' : '1rem',
-              fontFamily: 'Courier New, monospace'
-            }}>
-              TRAINING RECORD
-            </h3>
-            <div style={{
-              color: '#cbd5e1',
-              lineHeight: '1.6',
-              fontSize: isMobile ? '0.8rem' : '0.875rem'
-            }}>
-              <div style={{ marginBottom: '0.5rem' }}>
-                <strong style={{ color: '#a78bfa' }}>BABCOCK UNIVERSITY</strong>
-              </div>
-              <div style={{ 
-                fontSize: isMobile ? '0.75rem' : '0.875rem', 
-                color: '#94a3b8',
-                lineHeight: '1.4'
-              }}>
-                Bachelor of Arts in Mass Communication<br/>
-                Specialized in strategic communication and media analysis
-              </div>
-            </div>
+            <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginBottom: '0.5rem' }}>ACADEMIC_RECORD:</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: '700' }}>{education.institution}</div>
+            <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{education.degree}</div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )

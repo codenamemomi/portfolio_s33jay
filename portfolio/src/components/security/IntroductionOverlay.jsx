@@ -1,28 +1,41 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Satellite, User, Cpu, Briefcase, Database, Mail, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Satellite, User, Cpu, ArrowRight, Shield, Terminal } from 'lucide-react'
 
 const IntroductionOverlay = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const steps = [
     {
-      title: "WELCOME TO THE OMOMIJOLAOLUWA's PORTFOLIO CONCEPT",
-      description: "This is your interactive mission control interface. Navigate through different sections to learn about my skills and projects.",
-      icon: <Satellite style={{ width: 48, height: 48 }} />,
-      color: '#3b82f6'
+      title: "OPERATIONAL_READY_STATUS",
+      description: "Welcome to Mission Control. This interface provides secure access to agent profile data, project archives, and communication channels.",
+      icon: <Satellite style={{ width: 42, height: 42 }} />,
+      color: '#3b82f6',
+      label: "OBJECTIVE_01: SYSTEM_INIT"
     },
     {
-      title: "EXPLORE THE SECTIONS",
-      description: "Click on any target to access different portfolio sections. Each requires 'decryption' for immersive experience.",
-      icon: <User style={{ width: 48, height: 48 }} />,
-      color: '#10b981'
+      title: "DECRYPT_ARCHIVES",
+      description: "Mission files are encrypted by default. Use terminal nodes to access classified project dossiers and technical specifications.",
+      icon: <Shield style={{ width: 42, height: 42 }} />,
+      color: '#10b981',
+      label: "OBJECTIVE_02: DATA_ACCESS"
     },
     {
-      title: "MOBILE READY",
-      description: "Fully optimized for all devices. Tap targets to navigate on mobile.",
-      icon: <Cpu style={{ width: 48, height: 48 }} />,
-      color: '#f59e0b'
+      title: "SECURE_UPLINK",
+      description: "The communication array is optimized for low-latency transmission. Signal strength is monitored in real-time.",
+      icon: <Terminal style={{ width: 42, height: 42 }} />,
+      color: '#f59e0b',
+      label: "OBJECTIVE_03: UPLINK_CORE"
     }
   ]
 
@@ -45,110 +58,137 @@ const IntroductionOverlay = ({ onComplete }) => {
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'rgba(0, 0, 0, 0.95)',
+        background: '#020617ef',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10000,
-        padding: '1rem',
-        fontFamily: 'Courier New, monospace'
+        padding: '1.5rem',
+        fontFamily: "'JetBrains Mono', monospace",
+        backdropFilter: 'blur(20px)'
       }}
     >
       <motion.div
         key={currentStep}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         style={{
-          maxWidth: '500px',
+          maxWidth: '550px',
           width: '100%',
-          textAlign: 'center',
-          background: 'rgba(15, 23, 42, 0.8)',
-          border: `2px solid ${steps[currentStep].color}80`,
-          borderRadius: '1rem',
-          padding: '2rem',
-          backdropFilter: 'blur(10px)'
+          background: 'rgba(2, 6, 23, 0.8)',
+          border: `1px solid ${steps[currentStep].color}44`,
+          padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
+          position: 'relative',
+          overflow: 'hidden',
+          borderRadius: '4px'
         }}
       >
+        {/* Corner Accents */}
+        <div style={{ position: 'absolute', top: 10, left: 10, width: 20, height: 20, borderTop: `2px solid ${steps[currentStep].color}`, borderLeft: `2px solid ${steps[currentStep].color}` }} />
+        <div style={{ position: 'absolute', bottom: 10, right: 10, width: 20, height: 20, borderBottom: `2px solid ${steps[currentStep].color}`, borderRight: `2px solid ${steps[currentStep].color}` }} />
+
         <div style={{
           color: steps[currentStep].color,
-          marginBottom: '1.5rem'
+          fontSize: '0.65rem',
+          fontWeight: '900',
+          letterSpacing: '0.2em',
+          marginBottom: '2rem'
+        }}>
+          {steps[currentStep].label}
+        </div>
+
+        <div style={{
+          color: steps[currentStep].color,
+          marginBottom: '1.5rem',
+          opacity: 0.9
         }}>
           {steps[currentStep].icon}
         </div>
-        
+
         <h2 style={{
-          color: 'white',
-          fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
+          color: '#f8fafc',
+          fontSize: '1.5rem',
           marginBottom: '1rem',
-          fontWeight: 'bold'
+          fontWeight: '800',
+          letterSpacing: '-0.02em'
         }}>
           {steps[currentStep].title}
         </h2>
-        
+
         <p style={{
-          color: '#cbd5e1',
-          fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
-          lineHeight: '1.6',
-          marginBottom: '2rem'
+          color: '#94a3b8',
+          fontSize: '0.9rem',
+          lineHeight: '1.7',
+          marginBottom: '2.5rem'
         }}>
           {steps[currentStep].description}
         </p>
 
         <div style={{
           display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: isMobile ? '1.5rem' : '0'
         }}>
           <div style={{
-            color: '#64748b',
-            fontSize: '0.875rem'
+            color: '#475569',
+            fontSize: '0.7rem',
+            fontWeight: '700',
+            letterSpacing: '0.1em'
           }}>
-            {currentStep + 1} / {steps.length}
+            BRIEF_STEP: 0{currentStep + 1} / 0{steps.length}
           </div>
-          
+
           <motion.button
             onClick={nextStep}
             style={{
-              padding: '0.75rem 1.5rem',
-              background: `linear-gradient(135deg, ${steps[currentStep].color}, ${steps[currentStep].color}80)`,
-              border: 'none',
-              borderRadius: '0.5rem',
-              color: 'white',
-              fontFamily: 'Courier New, monospace',
-              fontWeight: 'bold',
+              width: isMobile ? '100%' : 'auto',
+              padding: isMobile ? '0.75rem 1rem' : '0.8rem 1.8rem',
+              background: 'transparent',
+              border: `1px solid ${steps[currentStep].color}`,
+              color: steps[currentStep].color,
+              fontFamily: 'inherit',
+              fontWeight: '800',
+              fontSize: isMobile ? '0.7rem' : '0.75rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem'
+              justifyContent: isMobile ? 'center' : 'flex-start',
+              gap: '0.75rem',
+              borderRadius: '2px',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
             }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ background: `${steps[currentStep].color}11` }}
+            whileTap={{ scale: 0.98 }}
           >
-            {currentStep < steps.length - 1 ? 'CONTINUE' : 'BEGIN MISSION'}
-            <ArrowRight style={{ width: 16, height: 16 }} />
+            {currentStep < steps.length - 1 ? 'PROCEED' : 'INITIALIZE_SIMULATION'}
+            <ArrowRight style={{ width: 14, height: 14 }} />
           </motion.button>
         </div>
       </motion.div>
 
-      {/* Skip button */}
+      {/* Abort button */}
       <motion.button
         onClick={onComplete}
         style={{
-          marginTop: '2rem',
-          padding: '0.5rem 1rem',
+          marginTop: '3rem',
+          padding: '0.6rem 1.2rem',
           background: 'transparent',
-          border: '1px solid #64748b',
-          borderRadius: '0.5rem',
+          border: '1px solid rgba(148, 163, 184, 0.1)',
+          borderRadius: '2px',
           color: '#64748b',
-          fontFamily: 'Courier New, monospace',
+          fontFamily: 'inherit',
           cursor: 'pointer',
-          fontSize: '0.875rem'
+          fontSize: '0.65rem',
+          fontWeight: '700',
+          letterSpacing: '0.1em'
         }}
-        whileHover={{ borderColor: '#ef4444', color: '#ef4444' }}
+        whileHover={{ borderColor: '#ef444466', color: '#ef4444' }}
       >
-        SKIP INTRODUCTION
+        [ ABORT_BRIEFING ]
       </motion.button>
     </motion.div>
   )

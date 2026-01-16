@@ -1,261 +1,255 @@
 import { motion } from 'framer-motion'
-import { Briefcase, ExternalLink, Github, Zap, Cpu, Database } from 'lucide-react'
+import { Briefcase, ExternalLink, Github, FileText, Lock, Shield } from 'lucide-react'
+import { portfolioData } from '../../data/portfolioData'
 
 const MissionFiles = () => {
-  const projects = [
-    {
-      id: 1,
-      name: 'KANEC IMPACT',
-      codename: 'BLOCKCHAIN TRANSPARENCY',
-      description: 'Blockchain-powered platform for transparent donations using Hedera DLT. Ensures 100% transparency in charitable giving to African impact projects.',
-      status: 'ACTIVE',
-      technologies: ['FastAPI', 'React', 'PostgreSQL', 'Hedera SDK', 'Docker'],
-      clearance: 'LEVEL 4',
-      liveUrl: 'https://kanec.vercel.app',
-      githubUrl: 'https://github.com/codenamemomi/KANEC_IMPACT',
-      color: '#8b5cf6'
-    },
-    {
-      id: 2,
-      name: 'DORUP',
-      codename: 'HOUSING AND HOSPITALITY',
-      description: 'End-to-end development of Leading technological innovation and driving the development of cutting-edge solutions.',
-      status: 'ACTIVE',
-      technologies: ['FastAPI', 'React', 'PostgreSQL', 'Docker', 'NGINX'],
-      clearance: 'LEVEL 4',
-      liveUrl: 'https://dorup.vercel.app/',
-      githubUrl: 'https://github.com/codenamemomi/DORUP',
-      color: '#eeb600ff'
-    },
-    {
-      id: 2,
-      name: 'KONASALTI TECH',
-      codename: 'EDUCATION PLATFORM',
-      description: 'End-to-end development of educational platform with course management and user authentication systems.',
-      status: 'DEPLOYED',
-      technologies: ['FastAPI', 'Next.js', 'PostgreSQL', 'Docker', 'NGINX'],
-      clearance: 'LEVEL 3',
-      liveUrl: 'https://konasalti.com',
-      githubUrl: 'https://github.com/codenamemomi/konasal_frontend',
-      color: '#3b82f6'
-    },
-    {
-      id: 3,
-      name: 'CLUST',
-      codename: 'EVENT MANAGEMENT',
-      description: 'Minimalist web application for creating, managing, and tracking events with automated reminders.',
-      status: 'COMPLETED',
-      technologies: ['FastAPI', 'PostgreSQL', 'Redis', 'Celery'],
-      clearance: 'LEVEL 3',
-      liveUrl: '#',
-      githubUrl: 'https://github.com/codenamemomi/clust',
-      color: '#10b981'
-    }
-  ]
+  const projects = portfolioData.projects.map(p => ({
+    ...p,
+    name: p.title,
+    codename: `PROJECT: ${p.tagline.toUpperCase()}`,
+    status: p.featured ? 'ACTIVE' : 'ARCHIVED',
+    clearance: p.featured ? 'LEVEL 4' : 'LEVEL 2',
+    color: p.id === 1 ? '#8b5cf6' : p.id === 2 ? '#fbbf24' : '#3b82f6'
+  }))
 
   return (
-    <div style={{ 
-      height: '100%', 
+    <div style={{
+      height: '100%',
       padding: '1rem',
       display: 'flex',
       flexDirection: 'column',
-      gap: '1rem'
+      gap: '1.5rem',
+      fontFamily: "'JetBrains Mono', monospace"
     }}>
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        style={{
-          flexShrink: 0
-        }}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        style={{ flexShrink: 0 }}
       >
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '1rem',
-          marginBottom: '0.5rem'
+          marginBottom: '0.75rem'
         }}>
-          <Briefcase style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />
-          <h1 style={{
-            color: '#8b5cf6',
-            fontSize: '1.25rem',
-            fontWeight: 'bold',
-            fontFamily: 'Courier New, monospace',
-            margin: 0
+          <div style={{
+            padding: '0.5rem',
+            background: 'rgba(139, 92, 246, 0.2)',
+            borderRadius: '0.5rem',
+            border: '1px solid rgba(139, 92, 246, 0.4)'
           }}>
-            MISSION FILES // PROJECT ARCHIVES
+            <Briefcase style={{ width: '24px', height: '24px', color: '#a78bfa' }} />
+          </div>
+          <h1 style={{
+            color: '#a78bfa',
+            fontSize: '1.5rem',
+            fontWeight: '800',
+            margin: 0,
+            letterSpacing: '-0.02em'
+          }}>
+            MISSION ARCHIVES
           </h1>
         </div>
-        
+
         <div style={{
-          padding: '0.75rem',
-          background: 'rgba(30, 41, 59, 0.5)',
-          border: '1px solid rgba(139, 92, 246, 0.3)',
-          borderRadius: '0.5rem',
-          fontFamily: 'Courier New, monospace',
+          padding: '0.5rem 1rem',
+          background: 'rgba(2, 6, 23, 0.8)',
+          borderLeft: '4px solid #8b5cf6',
           fontSize: '0.75rem',
-          color: '#a78bfa'
+          color: '#94a3b8',
+          letterSpacing: '0.05em'
         }}>
-          MISSION STATUS: ACTIVE | FILES: CLASSIFIED | CLEARANCE: LEVEL 4 REQUIRED
+          STATUS: CLASSIFIED // ACCESS LEVEL: 04 // ENCRYPTION: AES-256
         </div>
       </motion.div>
 
       {/* Projects Grid */}
       <div style={{
         flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-        overflowY: 'auto'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+        gap: '2rem',
+        overflowY: 'auto',
+        paddingRight: '0.5rem',
+        paddingBottom: '2rem'
       }}>
         {projects.map((project, index) => (
           <motion.div
             key={project.id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 + index * 0.1 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.1 }}
             style={{
-              padding: '1.5rem',
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: `1px solid ${project.color}30`,
-              borderRadius: '1rem',
-              backdropFilter: 'blur(10px)'
+              position: 'relative',
+              background: 'rgba(15, 23, 42, 0.4)',
+              border: '1px solid rgba(148, 163, 184, 0.1)',
+              borderRadius: '0.25rem',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
             }}
-            whileHover={{ 
-              borderColor: `${project.color}60`,
-              boxShadow: `0 10px 30px -10px ${project.color}20`
+            whileHover={{
+              borderColor: `${project.color}40`,
+              background: 'rgba(15, 23, 42, 0.6)'
             }}
           >
-            {/* Project Header */}
+            {/* Dossier Tab */}
             <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: '1rem'
-            }}>
-              <div>
+              height: '8px',
+              width: '100%',
+              background: `linear-gradient(90deg, ${project.color} 0%, ${project.color}33 100%)`,
+              opacity: 0.8
+            }} />
+
+            <div style={{ padding: '1.5rem' }}>
+              {/* TOP SECRET Watermark */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%) rotate(-15deg)',
+                fontSize: '4rem',
+                fontWeight: '900',
+                color: 'rgba(255, 255, 255, 0.03)',
+                pointerEvents: 'none',
+                whiteSpace: 'nowrap',
+                userSelect: 'none',
+                zIndex: 0
+              }}>
+                TOP SECRET
+              </div>
+
+              <div style={{ position: 'relative', zIndex: 1 }}>
                 <div style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.5rem'
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '1rem'
                 }}>
-                  <h2 style={{
-                    color: project.color,
-                    fontSize: '1.25rem',
-                    fontWeight: 'bold',
-                    margin: 0,
-                    fontFamily: 'Courier New, monospace'
-                  }}>
-                    {project.name}
-                  </h2>
+                  <div>
+                    <div style={{
+                      fontSize: '0.65rem',
+                      color: project.color,
+                      fontWeight: '800',
+                      marginBottom: '0.25rem',
+                      letterSpacing: '0.1em'
+                    }}>
+                      {project.codename}
+                    </div>
+                    <h2 style={{
+                      color: '#f8fafc',
+                      fontSize: '1.25rem',
+                      fontWeight: '700',
+                      margin: 0
+                    }}>
+                      {project.name}
+                    </h2>
+                  </div>
                   <div style={{
-                    padding: '0.25rem 0.75rem',
-                    background: `rgba(${parseInt(project.color.slice(1, 3), 16)}, ${parseInt(project.color.slice(3, 5), 16)}, ${parseInt(project.color.slice(5, 7), 16)}, 0.2)`,
+                    padding: '0.25rem 0.5rem',
+                    background: 'rgba(30, 41, 59, 0.8)',
                     border: `1px solid ${project.color}40`,
-                    borderRadius: '1rem',
+                    borderRadius: '0.25rem',
                     color: project.color,
-                    fontSize: '0.7rem',
-                    fontWeight: '600',
-                    fontFamily: 'Courier New, monospace'
+                    fontSize: '0.6rem',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem'
                   }}>
-                    {project.status}
+                    <Shield style={{ width: 10, height: 10 }} />
+                    {project.clearance}
                   </div>
                 </div>
-                <div style={{
+
+                <p style={{
                   color: '#94a3b8',
-                  fontSize: '0.8rem',
-                  fontFamily: 'Courier New, monospace',
-                  marginBottom: '0.5rem'
+                  fontSize: '0.85rem',
+                  lineHeight: '1.625',
+                  marginBottom: '1.5rem',
+                  minHeight: '4.5rem'
                 }}>
-                  CODENAME: {project.codename} | CLEARANCE: {project.clearance}
+                  {project.description}
+                </p>
+
+                {/* Meta Info */}
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '0.4rem'
+                  }}>
+                    {project.technologies.map((tech) => (
+                      <span key={tech} style={{
+                        fontSize: '0.65rem',
+                        color: '#64748b',
+                        padding: '0.2rem 0.5rem',
+                        background: 'rgba(30, 41, 59, 0.4)',
+                        border: '1px solid rgba(148, 163, 184, 0.1)',
+                        borderRadius: '0.15rem'
+                      }}>
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: '1rem',
+                    borderTop: '1px dashed rgba(148, 163, 184, 0.1)'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontSize: '0.65rem',
+                      color: '#4ade80'
+                    }}>
+                      <div style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: '#4ade80',
+                        boxShadow: '0 0 8px #4ade80'
+                      }} />
+                      {project.status}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      {project.githubUrl && project.githubUrl !== '#' && (
+                        <motion.a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#94a3b8' }}
+                          whileHover={{ color: '#f8fafc', scale: 1.1 }}
+                        >
+                          <Github style={{ width: 16, height: 16 }} />
+                        </motion.a>
+                      )}
+                      {project.liveUrl && project.liveUrl !== '#' && (
+                        <motion.a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#94a3b8' }}
+                          whileHover={{ color: project.color, scale: 1.1 }}
+                        >
+                          <ExternalLink style={{ width: 16, height: 16 }} />
+                        </motion.a>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {project.liveUrl && project.liveUrl !== '#' && (
-                  <motion.a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      padding: '0.5rem',
-                      background: 'rgba(34, 197, 94, 0.2)',
-                      border: '1px solid rgba(34, 197, 94, 0.4)',
-                      borderRadius: '0.5rem',
-                      color: '#4ade80',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ExternalLink style={{ width: '16px', height: '16px' }} />
-                  </motion.a>
-                )}
-                {project.githubUrl && project.githubUrl !== '#' && (
-                  <motion.a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      padding: '0.5rem',
-                      background: 'rgba(30, 41, 59, 0.5)',
-                      border: '1px solid rgba(139, 92, 246, 0.4)',
-                      borderRadius: '0.5rem',
-                      color: '#a78bfa',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Github style={{ width: '16px', height: '16px' }} />
-                  </motion.a>
-                )}
-              </div>
-            </div>
-
-            {/* Project Description */}
-            <p style={{
-              color: '#cbd5e1',
-              lineHeight: '1.6',
-              fontSize: '0.9rem',
-              marginBottom: '1.5rem'
-            }}>
-              {project.description}
-            </p>
-
-            {/* Technologies */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.5rem'
-            }}>
-              {project.technologies.map((tech, techIndex) => (
-                <motion.span
-                  key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + techIndex * 0.1 }}
-                  style={{
-                    padding: '0.4rem 0.75rem',
-                    background: `rgba(${parseInt(project.color.slice(1, 3), 16)}, ${parseInt(project.color.slice(3, 5), 16)}, ${parseInt(project.color.slice(5, 7), 16)}, 0.1)`,
-                    border: `1px solid ${project.color}30`,
-                    borderRadius: '1rem',
-                    color: project.color,
-                    fontSize: '0.7rem',
-                    fontWeight: '500',
-                    fontFamily: 'Courier New, monospace'
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  {tech}
-                </motion.span>
-              ))}
             </div>
           </motion.div>
         ))}

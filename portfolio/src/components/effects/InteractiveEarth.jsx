@@ -1,146 +1,102 @@
 import { useRef, useMemo } from 'react'
-import { useFrame, useLoader } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { Canvas } from '@react-three/fiber'
-import { TextureLoader } from 'three'
-import { OrbitControls, Stars } from '@react-three/drei'
+import { OrbitControls, Stars, Float } from '@react-three/drei'
 import * as THREE from 'three'
 
 function Earth() {
   const earthRef = useRef()
-  const cloudsRef = useRef()
-  
-  // Fallback colors since we don't have texture files
-  const earthColor = useMemo(() => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 2
-    canvas.height = 2
-    const ctx = canvas.getContext('2d')
-    const gradient = ctx.createLinearGradient(0, 0, 2, 2)
-    gradient.addColorStop(0, '#1e3a8a')
-    gradient.addColorStop(1, '#0ea5e9')
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, 2, 2)
-    return new THREE.CanvasTexture(canvas)
-  }, [])
+  const wireframeRef = useRef()
+  const glowRef = useRef()
 
-  const cloudsColor = useMemo(() => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 2
-    canvas.height = 2
-    const ctx = canvas.getContext('2d')
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, 2, 2)
-    return new THREE.CanvasTexture(canvas)
-  }, [])
-
-  useFrame((state) => {
-    if (earthRef.current) {
-      earthRef.current.rotation.y += 0.001
-    }
-    if (cloudsRef.current) {
-      cloudsRef.current.rotation.y += 0.0015
+  useFrame(({ clock }) => {
+    const elapsed = clock.getElapsedTime()
+    if (earthRef.current) earthRef.current.rotation.y = elapsed * 0.05
+    if (wireframeRef.current) wireframeRef.current.rotation.y = elapsed * 0.05
+    if (glowRef.current) {
+      glowRef.current.rotation.y = -elapsed * 0.02
+      glowRef.current.scale.setScalar(1.1 + Math.sin(elapsed * 0.5) * 0.02)
     }
   })
 
   return (
     <group>
       {/* Stars Background */}
-      <Stars 
-        radius={100} 
-        depth={50} 
-        count={5000} 
-        factor={4} 
-        saturation={0} 
-        fade 
-        speed={0.5}
+      <Stars
+        radius={100}
+        depth={50}
+        count={2000}
+        factor={4}
+        saturation={0}
+        fade
+        speed={1}
       />
-      
-      {/* Earth */}
+
+      {/* Core Sphere */}
       <mesh ref={earthRef}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshPhongMaterial
-          map={earthColor}
-          specular={new THREE.Color(0x333333)}
-          shininess={5}
+        <sphereGeometry args={[2, 64, 64]} />
+        <meshStandardMaterial
+          color="#1e3a8a"
+          emissive="#06b6d4"
+          emissiveIntensity={0.2}
+          transparent
+          opacity={0.6}
         />
       </mesh>
 
-      {/* Clouds */}
-      <mesh ref={cloudsRef} scale={[1.02, 1.02, 1.02]}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshPhongMaterial
-          map={cloudsColor}
-          transparent={true}
-          opacity={0.4}
-          depthWrite={false}
+      {/* Primary Wireframe */}
+      <mesh ref={wireframeRef}>
+        <sphereGeometry args={[2.01, 40, 40]} />
+        <meshBasicMaterial
+          color="#06b6d4"
+          wireframe
+          transparent
+          opacity={0.15}
         />
       </mesh>
 
-      {/* Satellite Orbits */}
-      <OrbitRing radius={3.0} color="#3b82f6" speed={0.35} />
+      {/* Atmospheric Glow */}
+      <mesh ref={glowRef}>
+        <sphereGeometry args={[2.05, 32, 32]} />
+        <meshBasicMaterial
+          color="#3b82f6"
+          wireframe
+          transparent
+          opacity={0.05}
+          side={THREE.BackSide}
+        />
+      </mesh>
+
+      {/* Data Rings */}
+      <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+        <DataRing radius={2.8} color="#06b6d4" rotation={[Math.PI / 4, 0, 0]} />
+        <DataRing radius={3.2} color="#3b82f6" rotation={[-Math.PI / 3, 0.5, 0]} />
+      </Float>
 
     </group>
   )
 }
 
-function OrbitRing({ radius, color, speed }) {
+function DataRing({ radius, color, rotation }) {
   const ringRef = useRef()
-  
-  useFrame(() => {
+
+  useFrame(({ clock }) => {
     if (ringRef.current) {
-      ringRef.current.rotation.x += speed * 0.01
-      ringRef.current.rotation.z += speed * 0.005
+      ringRef.current.rotation.z = clock.getElapsedTime() * 0.1
     }
   })
 
   return (
-    <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[radius - 0.02, radius + 0.02, 64]} />
+    <mesh rotation={rotation}>
+      <ringGeometry args={[radius, radius + 0.01, 128]} />
       <meshBasicMaterial
+        ref={ringRef}
         color={color}
         transparent
-        opacity={0.3}
+        opacity={0.2}
         side={THREE.DoubleSide}
       />
     </mesh>
-  )
-}
-
-function Satellite({ position, color, speed }) {
-  const satelliteRef = useRef()
-  const orbitRef = useRef()
-  
-  useFrame((state) => {
-    if (satelliteRef.current && orbitRef.current) {
-      const time = state.clock.elapsedTime * speed
-      const x = Math.cos(time) * Math.abs(position[0])
-      const z = Math.sin(time) * Math.abs(position[2] || position[0])
-      const y = Math.sin(time * 0.5) * 0.3
-      
-      satelliteRef.current.position.set(x, y, z)
-      satelliteRef.current.rotation.y = time
-      
-      // Make satellite always face direction of movement
-      satelliteRef.current.lookAt(
-        Math.cos(time + 0.1) * Math.abs(position[0]),
-        Math.sin((time + 0.1) * 0.5) * 0.3,
-        Math.sin(time + 0.1) * Math.abs(position[2] || position[0])
-      )
-    }
-  })
-
-  return (
-    <group ref={orbitRef}>
-      <mesh ref={satelliteRef}>
-        <boxGeometry args={[0.05, 0.02, 0.1]} />
-        <meshBasicMaterial color={color} />
-      </mesh>
-      
-      {/* Solar Panels */}
-      <mesh position={[0, 0, 0.06]}>
-        <planeGeometry args={[0.08, 0.04]} />
-      </mesh>
-    </group>
   )
 }
 
@@ -153,29 +109,21 @@ export default function InteractiveEarth() {
       width: '100%',
       height: '100%',
       zIndex: -2,
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      background: '#020617'
     }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-        <color attach="background" args={['#0a0a0f']} />
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} />
-        <spotLight
-          position={[-10, 10, 10]}
-          angle={0.3}
-          penumbra={1}
-          intensity={1}
-        />
-        
+      <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
+        <fog attach="fog" args={['#020617', 5, 15]} />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={2} color="#06b6d4" />
+
         <Earth />
-        
-        {/* Minimal controls for desktop */}
+
         <OrbitControls
           enableZoom={false}
           enablePan={false}
           enableRotate={true}
-          rotateSpeed={0.3}
-          maxPolarAngle={Math.PI}
-          minPolarAngle={0}
+          rotateSpeed={0.5}
         />
       </Canvas>
     </div>

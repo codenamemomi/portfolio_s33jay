@@ -1,62 +1,57 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useMemo } from 'react'
-import { Cpu, Database, Cloud, Code2, Server, Shield } from 'lucide-react'
+import { Cpu, Database, Cloud, Code2, Server, Shield, Activity } from 'lucide-react'
+import { portfolioData } from '../../data/portfolioData'
 
 const SkillBar = ({ skill, color }) => {
-  const barStyle = {
-    height: '6px',
-    backgroundColor: 'rgba(30, 41, 59, 0.8)',
-    borderRadius: '3px',
-    overflow: 'hidden',
-    border: '1px solid rgba(99, 102, 241, 0.2)'
-  }
-
-  const fillStyle = {
-    height: '100%',
-    background: `linear-gradient(90deg, ${color}, ${color}dd)`,
-    borderRadius: '3px',
-    boxShadow: `0 0 8px ${color}40`
-  }
-
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
+      initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      style={{ marginBottom: '1rem' }}
+      style={{ marginBottom: '1.25rem' }}
     >
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '0.5rem'
+        alignItems: 'baseline',
+        marginBottom: '0.4rem'
       }}>
-        <span style={{
-          fontWeight: '600',
-          color: 'white',
-          fontSize: '0.9rem',
-          fontFamily: 'Courier New, monospace'
-        }}>
-          {skill.name}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Activity style={{ width: 10, height: 10, color: color }} />
+          <span style={{
+            fontWeight: '800',
+            color: '#f8fafc',
+            fontSize: '0.75rem',
+            letterSpacing: '0.02em'
+          }}>
+            {skill.name.toUpperCase()}
+          </span>
+        </div>
         <span style={{
           color: color,
-          fontWeight: '600',
-          fontSize: '0.8rem',
-          fontFamily: 'Courier New, monospace'
+          fontWeight: '900',
+          fontSize: '0.7rem',
+          fontFamily: 'inherit'
         }}>
           {skill.level}%
         </span>
       </div>
-      <div style={barStyle}>
+      <div style={{
+        height: '4px',
+        backgroundColor: 'rgba(2, 6, 23, 0.8)',
+        borderRadius: '1px',
+        overflow: 'hidden',
+        border: '1px solid rgba(148, 163, 184, 0.1)'
+      }}>
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${skill.level}%` }}
-          transition={{ 
-            duration: 1.5, 
-            delay: 0.2,
-            ease: "easeOut"
+          transition={{ duration: 1, ease: "circOut" }}
+          style={{
+            height: '100%',
+            background: color,
+            boxShadow: `0 0 10px ${color}66`
           }}
-          style={fillStyle}
         />
       </div>
     </motion.div>
@@ -64,265 +59,164 @@ const SkillBar = ({ skill, color }) => {
 }
 
 const TechnicalSpecs = () => {
-  const [activeCategory, setActiveCategory] = useState('frontend')
-  const [hoveredTab, setHoveredTab] = useState(null)
-  
-  const skillCategories = useMemo(() => ({
-    frontend: {
-      name: 'FRONTEND SYSTEMS',
-      icon: <Code2 style={{ width: '20px', height: '20px' }} />,
-      color: '#3b82f6',
-      skills: [
-        { name: 'React', level: 90 },
-        { name: 'JavaScript', level: 85 },
-        { name: 'TypeScript', level: 80 },
-        { name: 'Next.js', level: 75 },
-        { name: 'Tailwind CSS', level: 85 }
-      ]
-    },
-    backend: {
-      name: 'BACKEND SYSTEMS',
-      icon: <Server style={{ width: '20px', height: '20px' }} />,
-      color: '#10b981',
-      skills: [
-        { name: 'Python', level: 88 },
-        { name: 'Django', level: 65 },
-        { name: 'FastAPI', level: 90 },
-        { name: 'Flask', level: 80 },
-        { name: 'Node.js', level: 35 }
-      ]
-    },
-    devops: {
-      name: 'DEV-OPS',
-      icon: <Cloud style={{ width: '20px', height: '20px' }} />,
-      color: '#f59e0b',
-      skills: [
-        { name: 'Docker', level: 78 },
-        { name: 'GitHub Actions', level: 75 },
-        { name: 'NGINX', level: 70 },
-        { name: 'Vercel', level: 85 },
-        { name: 'Render', level: 80 }
-      ]
-    },
-    blockchain: {
-      name: 'BLOCKCHAIN TECH',
-      icon: <Shield style={{ width: '20px', height: '20px' }} />,
-      color: '#8b5cf6',
-      skills: [
-        { name: 'Hedera SDK', level: 75 },
-        { name: 'Smart Contracts', level: 70 },
-        { name: 'Web3', level: 65 }
-      ]
-    }
-  }), [])
+  const [activeCategory, setActiveCategory] = useState('backend')
 
-  // Memoize the current category skills
-  const currentSkills = useMemo(() => 
-    skillCategories[activeCategory].skills,
-    [activeCategory, skillCategories]
-  )
-
-  const handleTabClick = (key) => {
-    setActiveCategory(key)
-    setHoveredTab(null)
-  }
-
-  const getTabStyle = (key, category) => {
-    const isActive = activeCategory === key
-    const isHovered = hoveredTab === key
-    
-    let backgroundColor = 'rgba(30, 41, 59, 0.5)'
-    let borderColor = 'rgba(245, 158, 11, 0.2)'
-    let textColor = '#cbd5e1'
-
-    if (isActive) {
-      backgroundColor = category.color
-      borderColor = category.color
-      textColor = 'white'
-    } else if (isHovered) {
-      backgroundColor = 'rgba(245, 158, 11, 0.1)'
-      borderColor = 'rgba(245, 158, 11, 0.4)'
-    }
-
+  const skillCategories = useMemo(() => {
+    const { skills } = portfolioData
     return {
-      padding: '1rem 0.75rem',
-      backgroundColor,
-      border: `1px solid ${borderColor}`,
-      borderRadius: '0.75rem',
-      color: textColor,
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      backdropFilter: 'blur(10px)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '0.5rem',
-      fontFamily: 'Courier New, monospace',
-      fontSize: '0.8rem'
+      backend: {
+        name: 'BACKEND_CORE',
+        icon: <Server style={{ width: 18, height: 18 }} />,
+        color: '#10b981',
+        updated: '2025.Q1',
+        skills: skills.backend
+      },
+      frontend: {
+        name: 'FRONTEND_SYSTEMS',
+        icon: <Code2 style={{ width: 18, height: 18 }} />,
+        color: '#3b82f6',
+        updated: '2025.Q1',
+        skills: skills.frontend
+      },
+      devops: {
+        name: 'CLOUD_DEPLOYMENT',
+        icon: <Cloud style={{ width: 18, height: 18 }} />,
+        color: '#f59e0b',
+        updated: '2025.Q1',
+        skills: skills.devops
+      },
+      security: {
+        name: 'CYBER_DEFENSE',
+        icon: <Shield style={{ width: 18, height: 18 }} />,
+        color: '#8b5cf6',
+        updated: '2025.Q1',
+        skills: skills.security
+      }
     }
-  }
+  }, [])
 
   return (
-    <div style={{ 
-      height: '100%', 
-      padding: '1rem',
+    <div style={{
+      height: '100%',
+      padding: '1.5rem',
       display: 'flex',
       flexDirection: 'column',
-      gap: '1rem'
+      gap: '1.5rem',
+      fontFamily: "'JetBrains Mono', monospace"
     }}>
-      {/* Header */}
+      {/* Schematic Header */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{
-          flexShrink: 0
-        }}
+        style={{ flexShrink: 0 }}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '0.5rem'
-        }}>
-          <Cpu style={{ width: '24px', height: '24px', color: '#f59e0b' }} />
-          <h1 style={{
-            color: '#f59e0b',
-            fontSize: '1.25rem',
-            fontWeight: 'bold',
-            fontFamily: 'Courier New, monospace',
-            margin: 0
-          }}>
-            TECHNICAL SPECS // SYSTEMS ANALYSIS
-          </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+          <Cpu style={{ width: 20, height: 20, color: '#f59e0b' }} />
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f8fafc', margin: 0 }}>TECH_SPECIFICATIONS_V3.0</h1>
         </div>
-        
-        <div style={{
-          padding: '0.75rem',
-          background: 'rgba(30, 41, 59, 0.5)',
-          border: '1px solid rgba(245, 158, 11, 0.3)',
-          borderRadius: '0.5rem',
-          fontFamily: 'Courier New, monospace',
-          fontSize: '0.75rem',
-          color: '#fbbf24'
-        }}>
-          SYSTEM ANALYSIS: ACTIVE | TECHNICAL PROFICIENCY: LEVEL 3 | SPECS: UNCLASSIFIED
-        </div>
+        <div style={{ height: '1px', width: '100%', background: 'rgba(245, 158, 11, 0.2)', marginBottom: '1rem' }} />
       </motion.div>
 
-      {/* Content Area */}
       <div style={{
         flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-        overflowY: 'auto'
+        display: 'grid',
+        gridTemplateColumns: '220px 1fr',
+        gap: '2rem',
+        overflow: 'hidden'
       }}>
-        {/* Category Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: '0.75rem'
-          }}
-        >
-          {Object.entries(skillCategories).map(([key, category]) => (
+        {/* Navigation Sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {Object.entries(skillCategories).map(([key, cat]) => (
             <motion.button
               key={key}
-              onClick={() => handleTabClick(key)}
-              onMouseEnter={() => setHoveredTab(key)}
-              onMouseLeave={() => setHoveredTab(null)}
-              style={getTabStyle(key, category)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveCategory(key)}
+              style={{
+                padding: '0.75rem 1rem',
+                background: activeCategory === key ? 'rgba(245, 158, 11, 0.1)' : 'transparent',
+                border: `1px solid ${activeCategory === key ? '#f59e0b' : 'rgba(148, 163, 184, 0.1)'}`,
+                color: activeCategory === key ? '#f59e0b' : '#94a3b8',
+                fontSize: '0.65rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                borderRadius: '2px',
+                transition: 'all 0.2s ease'
+              }}
+              whileHover={{ borderColor: '#f59e0b66' }}
             >
-              {category.icon}
-              {category.name}
+              {cat.icon}
+              {cat.name}
             </motion.button>
           ))}
-        </motion.div>
 
-        {/* Skills Display */}
-        <motion.div
-          key={activeCategory}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            padding: '1.5rem',
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: `1px solid ${skillCategories[activeCategory].color}30`,
-            borderRadius: '1rem',
-            backdropFilter: 'blur(10px)',
-            flex: 1
-          }}
-        >
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            marginBottom: '1.5rem'
-          }}>
-            <div style={{
-              padding: '0.5rem',
-              background: `rgba(${parseInt(skillCategories[activeCategory].color.slice(1, 3), 16)}, ${parseInt(skillCategories[activeCategory].color.slice(3, 5), 16)}, ${parseInt(skillCategories[activeCategory].color.slice(5, 7), 16)}, 0.2)`,
-              borderRadius: '0.5rem',
-              color: skillCategories[activeCategory].color
-            }}>
-              {skillCategories[activeCategory].icon}
-            </div>
-            <h3 style={{
-              color: skillCategories[activeCategory].color,
-              fontSize: '1.1rem',
-              fontWeight: 'bold',
-              margin: 0,
-              fontFamily: 'Courier New, monospace'
-            }}>
-              {skillCategories[activeCategory].name}
-            </h3>
+          <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
+            <div style={{ fontSize: '0.5rem', color: '#64748b', marginBottom: '0.2rem' }}>SYSTEM_TIME</div>
+            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{new Date().toLocaleTimeString()}</div>
           </div>
-          
+        </div>
+
+        {/* Diagnostic Panel */}
+        <div style={{
+          background: 'rgba(2, 6, 23, 0.4)',
+          border: '1px solid rgba(148, 163, 184, 0.1)',
+          padding: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative'
+        }}>
           <div style={{
+            position: 'absolute',
+            top: '0',
+            right: '0',
+            padding: '0.5rem',
+            fontSize: '0.55rem',
+            color: '#64748b',
+            letterSpacing: '0.1em'
+          }}>
+            LAST_UPDT: {skillCategories[activeCategory].updated}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              style={{ flex: 1 }}
+            >
+              <div style={{ fontSize: '0.8rem', fontWeight: '800', color: skillCategories[activeCategory].color, marginBottom: '2rem' }}>
+                {'>'} ANALYZING {skillCategories[activeCategory].name}...
+              </div>
+
+              <div style={{ display: 'grid', gap: '0.5rem' }}>
+                {skillCategories[activeCategory].skills.map((skill) => (
+                  <SkillBar
+                    key={skill.name}
+                    skill={skill}
+                    color={skillCategories[activeCategory].color}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Bottom Grid Overlay */}
+          <div style={{
+            marginTop: 'auto',
+            paddingTop: '1rem',
+            borderTop: '1px solid rgba(148, 163, 184, 0.05)',
             display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '1rem'
           }}>
-            {currentSkills.map((skill) => (
-              <SkillBar 
-                key={skill.name} 
-                skill={skill} 
-                color={skillCategories[activeCategory].color}
-              />
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} style={{ height: '2px', background: 'rgba(148, 163, 184, 0.1)' }} />
             ))}
           </div>
-
-          {/* Proficiency Legend */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            style={{
-              marginTop: '2rem',
-              padding: '1rem',
-              background: 'rgba(30, 41, 59, 0.5)',
-              border: '1px solid rgba(245, 158, 11, 0.2)',
-              borderRadius: '0.5rem',
-              fontFamily: 'Courier New, monospace',
-              fontSize: '0.75rem',
-              color: '#fbbf24'
-            }}
-          >
-            <div style={{ marginBottom: '0.5rem', fontWeight: 'bold' }}>PROFICIENCY SCALE:</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem' }}>
-              <span>BASIC</span>
-              <span>INTERMEDIATE</span>
-              <span>ADVANCED</span>
-              <span>EXPERT</span>
-            </div>
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )
